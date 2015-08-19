@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rs.lottoweb.mapper.LottoHistoryMapper">
+    <insert id="insert" parameterType="com.rs.lottoweb.domain.LottoHistory">
+        INSERT INTO LottoHistory (
+        	round
+        	, dat
+        	, chucheomgi
+        	, num1_ord
+        	, num2_ord
+        	, num3_ord
+        	, num4_ord
+        	, num5_ord
+        	, num6_ord
+        	, num7
+        	, nums
+        ) VALUES (
+        	#{round}
+        	, <choose>
+        		<when test="dat == null or dat == '0000-00-00'">
+        		    null
+        		</when>
+        		<otherwise>DATE '${dat}'</otherwise>
+        	</choose>
+        	, #{chucheomgi}
+        	, #{num1_ord}
+        	, #{num2_ord}
+        	, #{num3_ord}
+        	, #{num4_ord}
+        	, #{num5_ord}
+        	, #{num6_ord}
+        	, #{num7}
+        	, ARRAY [${num1}, ${num2}, ${num3}, ${num4}, ${num5}, ${num6}]
+        	<!-- 
+        	, ARRAY<foreach collection="nums" separator="," open="[" close="]" item="item">#{item}</foreach>
+        	 -->
+        )
+    </insert>
+    
+    <select id="selectExclusion" parameterType="Map" resultType="com.rs.lottoweb.domain.LottoAnalysis">
+        WITH recursive rounds(round) as (
+        		VALUES(${round})
+        	UNION
+        		SELECT round -1 FROM rounds WHERE round > #{round} - #{limit} + 1
+        )
+      	SELECT
+			A.round - B.round AS diff
+			, count(*) as cnt
+        FROM
+        	rounds A
+        	LEFT JOIN LottoHistory B ON A.round > B.round
+        		AND B.${column} NOT IN (
+	        		UNNEST(
+		        		(
+			        		SELECT
+			        			nums
+			        		FROM
+			        			LottoHistory
+			        		WHERE
+			        			round = A.round
+		        		)
+	        		)
+	        	)
+		GROUP BY
+			A.round - B.round
+		ORDER BY
+			cnt DESC
+			, diff ASC
+    </select>
+    
+    <select id="testRecursive" resultType="Integer">
+        WITH RECURSIVE t(n) AS (
+        		VALUES (1)
+        	UNION 
+        		SELECT
+        			n+1
+        		FROM
+        			t
+        		WHERE
+        			n <![CDATA[ < ]]> 100
+        )
+        SELECT
+        	sum(n)
+        FROM
+        	t
+    </select>
+    
+    
+    <select id="selectDiff" resultType="Integer">
+        SELECT
+        	DISTINCT ${column}
+        FROM
+        	LottoHistory
+        WHERE
+        	round in <foreach collection="list" open="(" close=")" separator="," item="item">#{round} - #{item.diff}</foreach>
+        ORDER BY	${column}
+    </select>
+    
+    
+    <select id="selectByRound" resultType="com.rs.lottoweb.domain.LottoHistory">
+        SELECT
+        	round
+			, num1_ord
+			, num2_ord
+			, num3_ord
+			, num4_ord
+			, num5_ord
+			, num6_ord
+        FROM
+        	LottoHistory
+        WHERE
+        	round = #{round}
+    </select>
+</mapper>
+  
