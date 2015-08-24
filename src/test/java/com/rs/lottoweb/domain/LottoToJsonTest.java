@@ -52,7 +52,7 @@ public class LottoToJsonTest {
 		JsonArray jarr = new JsonArray();
 		
 		//json 읽어옴
-		List<LottoHistory> lottoList = readJson();
+		List<LottoHistory> lottoList = readJson(lottoResource.getFile());
 
 		int start = 0;
 		for(int i = min; i <= current; i++){
@@ -81,17 +81,17 @@ public class LottoToJsonTest {
 		gson.toJson(jarr, jw);
 		jw.flush();
 		jw.close();
+		
+		generateSQL();
 	}
-
 	
-	@Test
 	public void generateSQL() throws Exception{
 		
 		String sql = "INSERT INTO LottoHistory VALUES(%d, %s, %d, %d, %d, %d, %d, %d, %d, %d, ARRAY [%d, %d, %d, %d, %d, %d]);\n";
 		BufferedWriter bw = new BufferedWriter(new FileWriter(sqlLocation));
 		
 		//json 읽어옴
-		List<LottoHistory> lottoList = readJson();
+		List<LottoHistory> lottoList = readJson(jsonLocation);
 		
 		//for문 돌림
 		for(LottoHistory history : lottoList){
@@ -120,9 +120,9 @@ public class LottoToJsonTest {
 	}
 	
 
-	public List<LottoHistory> readJson() {
+	public List<LottoHistory> readJson(File lottoJsonFile) {
 		try {
-			JsonReader jr = new JsonReader(new FileReader(lottoResource.getFile()));
+			JsonReader jr = new JsonReader(new FileReader(lottoJsonFile));
 			Type collectionType = new TypeToken<List<LottoHistory>>(){}.getType();
 			return gson.fromJson(jr, collectionType);
 		} catch (Exception e) {

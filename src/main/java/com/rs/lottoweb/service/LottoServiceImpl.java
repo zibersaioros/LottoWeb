@@ -1,5 +1,6 @@
 package com.rs.lottoweb.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -8,10 +9,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.http.client.fluent.Request;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.gson.Gson;
 import com.rs.lottoweb.domain.ExclusionAnalysis;
 import com.rs.lottoweb.domain.LottoAnalysis;
 import com.rs.lottoweb.domain.LottoHistory;
@@ -21,26 +25,44 @@ import com.rs.lottoweb.mapper.LottoHistoryMapper;
 @Transactional(readOnly=true)
 public class LottoServiceImpl implements LottoService{
 	
-	public static final int min = 262; //2007-12-08;
-
-	public static final int year = 2007;
-	public static final int month = 12;
-	public static final int day = 8;
-	
-	static final String columns[] = {
-		"num1_ord"
-		, "num2_ord"
-		, "num3_ord"
-		, "num4_ord"
-		, "num5_ord"
-		, "num6_ord"
-		, "num7"
-	};
-	
-
 	@Autowired
 	LottoHistoryMapper lottoMapper;
 	
+	//주기적으로 데이터를 인서트
+	@Scheduled
+	public int scheduleInsert() throws IOException{
+		System.out.println("scheduled insert");
+		
+		String url = "http://www.lottonumber.co.kr/ajax.winnum.php?cnt=";
+		
+		// 모든 회차 가져옴.
+		List<LottoHistory> lottoList = lottoMapper.selectAllRound();
+		int currentRound = getCurrentNumber();
+		int insertCount = 0;
+		
+		Gson gson = new Gson();
+		
+		//없는 회차는 DB에 집어넣음.
+		int start = 0;
+		for(int i = min; i <= currentRound; i++){
+			LottoHistory history = null;
+			try {
+				history = lottoList.get(start);
+			} catch (Exception e) {}
+			
+			if(history == null || history.getRound() != i){
+				String jsonString = Request.Get(url + i).execute().returnContent().asString();
+				history = gson.fromJson(jsonString, LottoHistory.class);
+				history.setRound(i);
+				insert(history);
+				insertCount++;
+			} else {
+				start++;
+			}
+		}
+		
+		return insertCount;
+	}
 	
 	
 	@Override

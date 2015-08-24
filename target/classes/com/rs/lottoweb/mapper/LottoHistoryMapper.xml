@@ -111,5 +111,16 @@
         WHERE
         	round = #{round}
     </select>
+    
+    <select id="selectAllRound" resultType="com.rs.lottoweb.domain.LottoHistory">
+    	SELECT
+    		round
+    	FROM
+    		LottoHistory
+    	ORDER BY
+    		round ASC
+    </select>
+    
+    
 </mapper>
   

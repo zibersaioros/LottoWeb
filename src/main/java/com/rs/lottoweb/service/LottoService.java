@@ -8,7 +8,27 @@ import com.rs.lottoweb.domain.LottoHistory;
 
 
 public interface LottoService {
+	public static final int min = 262; //2007-12-08;.
+
+	public static final int year = 2007;
+	public static final int month = 12;
+	public static final int day = 8;
+	
+	static final String columns[] = {
+		"num1_ord"
+		, "num2_ord"
+		, "num3_ord"
+		, "num4_ord"
+		, "num5_ord"
+		, "num6_ord"
+		, "num7"
+	};
+	
 	public int insert(LottoHistory lottoHistory);
+	
+	/**
+	 * @return 현재까지 진행된 회차 리턴
+	 */
 	public int getCurrentNumber();
 	public List<Integer> getExclusionNumber(int lottoRound, int checkRound, int sequence);
 	public LottoHistory selectByRound(int round);

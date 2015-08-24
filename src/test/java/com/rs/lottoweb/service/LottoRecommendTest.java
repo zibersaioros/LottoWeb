@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.rs.lottoweb.config.AppConfig;
+import com.rs.lottoweb.config.BootApplication;
 import com.rs.lottoweb.domain.ExclusionAnalysis;
 import com.rs.lottoweb.domain.LottoAnalysis;
 import com.rs.lottoweb.domain.LottoHistory;
@@ -22,7 +22,7 @@ import com.rs.lottoweb.mapper.LottoHistoryMapper;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes={AppConfig.class})
+@ContextConfiguration(classes={BootApplication.class})
 public class LottoRecommendTest {
 
 	

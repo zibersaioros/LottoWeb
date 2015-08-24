@@ -12,13 +12,11 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.rs.lottoweb.service.LottoService;
 
 @MapperScan("com.rs.lottoweb.mapper")
 @Configuration
-@EnableTransactionManagement
 @ComponentScan(basePackageClasses={LottoService.class})
 public class AppConfig {
 
