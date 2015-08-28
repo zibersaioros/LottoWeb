@@ -29,16 +29,15 @@ public class LottoServiceImpl implements LottoService{
 	LottoHistoryMapper lottoMapper;
 	
 	//주기적으로 데이터를 인서트
-	@Scheduled
-	public int scheduleInsert() throws IOException{
-		System.out.println("scheduled insert");
-		
+	@Override
+	@Scheduled(cron="0 0 */6 * * *") //6시간마다 돌림.
+	@Transactional(readOnly=false)
+	public void scheduleInsert() throws IOException{
 		String url = "http://www.lottonumber.co.kr/ajax.winnum.php?cnt=";
 		
 		// 모든 회차 가져옴.
 		List<LottoHistory> lottoList = lottoMapper.selectAllRound();
 		int currentRound = getCurrentNumber();
-		int insertCount = 0;
 		
 		Gson gson = new Gson();
 		
@@ -55,13 +54,11 @@ public class LottoServiceImpl implements LottoService{
 				history = gson.fromJson(jsonString, LottoHistory.class);
 				history.setRound(i);
 				insert(history);
-				insertCount++;
 			} else {
 				start++;
 			}
 		}
 		
-		return insertCount;
 	}
 	
 	
@@ -72,18 +69,18 @@ public class LottoServiceImpl implements LottoService{
 	}
 
 	@Override
-	public List<Integer> getExclusionNumber(int lottoRound, int limit, int sequence) {
+	public List<Integer> getExclusionNumber(int lottoRound, int analCount, int sequence) {
 		
 		HashMap<String, Object> param = new HashMap<String, Object>();
-		param.put("limit", limit);
+		param.put("analCount", analCount);
 		
 		List<Integer> nums = new ArrayList<Integer>();
 		
 		for(String column : columns){
 			param.put("column", column);
-			param.put("round", lottoRound-1);
+			param.put("start", lottoRound-1);
 			
-			List<LottoAnalysis> list = lottoMapper.selectExclusion(param);
+			List<LottoAnalysis> list = lottoMapper.selectExclusionPair(param);
 			list = getMaxCount(list, sequence);
 			
 			param.put("round", lottoRound);
@@ -96,7 +93,7 @@ public class LottoServiceImpl implements LottoService{
 	}
 	
 	/**
-	 * 가장 많이나온 회차 - sequence 만큼 리턴
+	 * 가장 많이나온 회차 - sequence 번째 리턴
 	 * @param list
 	 * @return
 	 */

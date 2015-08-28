@@ -11,3 +11,9 @@ CREATE TABLE LottoHistory(
 	, num7 INT NOT NULL
 	, nums INT ARRAY[6]
 );
+
+CREATE TABLE LottoExclusion(
+	round INT NOT NULL
+	, num INT NOT NULL
+	, PRIMARY KEY(round, num)
+);

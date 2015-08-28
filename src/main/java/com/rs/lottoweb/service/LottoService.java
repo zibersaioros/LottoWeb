@@ -1,5 +1,6 @@
 package com.rs.lottoweb.service;
 
+import java.io.IOException;
 import java.util.List;
 
 import com.rs.lottoweb.domain.ExclusionAnalysis;
@@ -34,4 +35,11 @@ public interface LottoService {
 	public LottoHistory selectByRound(int round);
 	
 	public ExclusionAnalysis analysisExclusion(int analysisCount, int minLimit, int maxLimit, int minSeq, int maxSeq);
+	
+	/**
+	 * 주기적으로 데이터를 인서트
+	 * @throws IOException
+	 */
+	public void scheduleInsert() throws IOException;
+	
 }

@@ -15,7 +15,13 @@ public interface LottoHistoryMapper {
 	 */
 	public int insert(LottoHistory lottoHistory);
 	
-	public List<LottoAnalysis> selectExclusion(Map<String, Object> param);
+	/**
+	 * 제외수 페어를 제외가 많이 된 순으로 리턴.
+	 *
+	 * @param param (start: 분석을 시작할 회차(높은 곳에서 아래로 시작함), analCount: 과거회차를 몇번 분석할 지, column: 제외수 분석할 컬럼명)
+	 * @return
+	 */
+	public List<LottoAnalysis> selectExclusionPair(Map<String, Object> param);
 	public List<Integer> selectDiff(Map<String, Object> param);
 	public LottoHistory selectByRound(int round);
 	
@@ -26,4 +32,10 @@ public interface LottoHistoryMapper {
 	 * @return
 	 */
 	public List<LottoHistory> selectAllRound();
+	
+	/**
+	 *  로또 개수를 가져온다.
+	 * @return
+	 */
+	public int getLottoCount();
 }
