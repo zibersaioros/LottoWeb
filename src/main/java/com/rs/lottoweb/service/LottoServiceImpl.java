@@ -69,10 +69,10 @@ public class LottoServiceImpl implements LottoService{
 	}
 
 	@Override
-	public List<Integer> getExclusionNumber(int lottoRound, int analCount, int sequence) {
+	public List<Integer> getExclusionNumber(int lottoRound, int analRange, int sequence) {
 		
 		HashMap<String, Object> param = new HashMap<String, Object>();
-		param.put("analCount", analCount);
+		param.put("analRange", analRange);
 		
 		List<Integer> nums = new ArrayList<Integer>();
 		
@@ -118,7 +118,6 @@ public class LottoServiceImpl implements LottoService{
 		return list;
 	}
 	
-	
 	private List<Integer> removeDuplicate(List<Integer> list){
 		
 		Collections.sort(list);
@@ -157,22 +156,27 @@ public class LottoServiceImpl implements LottoService{
 	}
 
 	
+	
 	@Override
-	public ExclusionAnalysis analysisExclusion(int analysisCount, int minLimit, int maxLimit, int minSeq, int maxSeq) {
-		int limitPlus = 5;
+	public ExclusionAnalysis analysisExclusion(int analysisCount, int minRange, int maxRange, int rangeIncrease
+			, int minSeq, int maxSeq) {
+		
+		
 		int seqPlus = 1;
 		
 		int maxSuccess = -1;
-		int recLimit = -1;
-		int recSeq = -1;
+		int recommendRange = -1;
+		int recommendSequence = -1;
 		
-		for(int limit = minLimit; limit <= maxLimit; limit+=limitPlus ){
+		List<ExclusionAnalysis> analysisList = new ArrayList<ExclusionAnalysis>();
+		
+		for(int range = minRange; range <= maxRange; range+=rangeIncrease ){
 			for(int seq = minSeq; seq <= maxSeq; seq+=seqPlus){
 				int successCount = 0;
 				for(int i = 0; i < analysisCount; i++){
 					
 					int round = getCurrentNumber() - i;
-					List<Integer> nums = getExclusionNumber(round, limit, seq);
+					List<Integer> nums = getExclusionNumber(round, range, seq);
 					LottoHistory history = selectByRound(round);
 					
 					
@@ -189,8 +193,10 @@ public class LottoServiceImpl implements LottoService{
 				
 				if(successCount > maxSuccess){
 					maxSuccess = successCount;
-					recLimit = limit;
-					recSeq = seq;
+					recommendRange = range;
+					recommendSequence = seq;
+				} else {
+					
 				}
 			}
 		}

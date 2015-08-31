@@ -41,7 +41,7 @@
         WITH recursive rounds(round) as (
         		VALUES(${start})
         	UNION
-        		SELECT round -1 FROM rounds WHERE round > #{start} - #{analCount}
+        		SELECT round -1 FROM rounds WHERE round > #{start} - #{analRange}
         )
       	SELECT
 			A.round - B.round AS diff
