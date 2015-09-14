@@ -118,7 +118,8 @@ public class LottoServiceImpl implements LottoService{
 		return list;
 	}
 	
-	private List<Integer> removeDuplicate(List<Integer> list){
+	@Override
+	public  List<Integer> removeDuplicate(List<Integer> list){
 		
 		Collections.sort(list);
 		
@@ -158,15 +159,12 @@ public class LottoServiceImpl implements LottoService{
 	
 	
 	@Override
-	public ExclusionAnalysis analysisExclusion(int analysisCount, int minRange, int maxRange, int rangeIncrease
+	public List<ExclusionAnalysis> analysisExclusion(int analysisCount, int minRange, int maxRange, int rangeIncrease
 			, int minSeq, int maxSeq) {
 		
 		
 		int seqPlus = 1;
-		
 		int maxSuccess = -1;
-		int recommendRange = -1;
-		int recommendSequence = -1;
 		
 		List<ExclusionAnalysis> analysisList = new ArrayList<ExclusionAnalysis>();
 		
@@ -192,16 +190,17 @@ public class LottoServiceImpl implements LottoService{
 				}
 				
 				if(successCount > maxSuccess){
-					maxSuccess = successCount;
-					recommendRange = range;
-					recommendSequence = seq;
-				} else {
+					analysisList.clear();
+					analysisList.add(new ExclusionAnalysis(range, seq));
 					
+					maxSuccess = successCount;
+				} else if (successCount == maxSuccess){
+					analysisList.add(new ExclusionAnalysis(range, seq));
 				}
 			}
 		}
 		
-		return new ExclusionAnalysis(recLimit, recSeq);
+		return analysisList;
 	}
 	
 }

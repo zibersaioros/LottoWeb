@@ -34,7 +34,15 @@ public interface LottoService {
 	public List<Integer> getExclusionNumber(int lottoRound, int checkRound, int sequence);
 	public LottoHistory selectByRound(int round);
 	
-	public ExclusionAnalysis analysisExclusion(int analysisCount, int minLimit, int maxLimit, int minSeq, int maxSeq);
+	public List<ExclusionAnalysis> analysisExclusion(int analysisCount, int minRange, int maxRange, int rangeIncrease
+			, int minSeq, int maxSeq);
+	
+	/**
+	 * 숫자를 정렬한 후 중복을 제거함
+	 * @param list
+	 * @return
+	 */
+	public List<Integer> removeDuplicate(List<Integer> list);
 	
 	/**
 	 * 주기적으로 데이터를 인서트

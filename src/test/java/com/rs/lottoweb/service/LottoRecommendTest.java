@@ -14,14 +14,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.rs.lottoweb.BootApplication;
+import com.rs.lottoweb.LottoBootApplication;
 import com.rs.lottoweb.domain.LottoAnalysis;
 import com.rs.lottoweb.domain.LottoHistory;
 import com.rs.lottoweb.mapper.LottoHistoryMapper;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes={BootApplication.class})
+@ContextConfiguration(classes={LottoBootApplication.class})
 public class LottoRecommendTest {
 
 	
@@ -31,48 +31,6 @@ public class LottoRecommendTest {
 	@Autowired
 	LottoService lottoService;
 	
-	@Test
-	@Ignore
-	public void testInsert(){
-		LottoHistory lh = new LottoHistory();
-		lh.setRound(661);
-		lh.setDat("2015-07-25");
-		lh.setChucheomgi(3);
-		lh.setNum1_ord(1);
-		lh.setNum2_ord(2);
-		lh.setNum3_ord(3);
-		lh.setNum4_ord(4);
-		lh.setNum5_ord(5);
-		lh.setNum6_ord(6);
-		lh.setNum1(1);
-		lh.setNum2(2);
-		lh.setNum3(3);
-		lh.setNum4(4);
-		lh.setNum5(5);
-		lh.setNum6(6);
-		lh.setNum7(7);
-		
-		int count = lottoHistoryMapper.insert(lh);
-		
-		assertTrue(count == 1);
-	}
-	
-	@Test
-	@Ignore
-	public void testSelectExclusion(){
-		Map<String, Object> param = new HashMap<String, Object>();
-		param.put("column", "num1_ord");
-		param.put("round", 650);
-		param.put("limit", 50);
-		List<LottoAnalysis> list =lottoHistoryMapper.selectExclusion(param);
-		
-		assertTrue(list.size() > 0);
-		
-		for(LottoAnalysis anal : list){
-			System.out.println("diff : " + anal.getDiff() + " cnt : " + anal.getCnt());
-		}
-		
-	}
 	
 	@Test
 	@Ignore

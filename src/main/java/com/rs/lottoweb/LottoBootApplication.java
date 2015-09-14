@@ -6,8 +6,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableScheduling
-public class BootApplication{
+public class LottoBootApplication{
 	public static void main(String[] args) {
-		SpringApplication.run(BootApplication.class, args);
+		SpringApplication.run(LottoBootApplication.class, args);
 	}
 }
