@@ -1,11 +1,7 @@
 package com.rs.lottoweb.service;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -81,6 +77,14 @@ public class LottoServiceTest {
 		int nw = lottoHistoryMapper.getLottoCount();
 		
 		assertThat(nw, is(not(old)));
+	}
+	
+	
+	@Test
+	public void testExclusionRate(){
+		double rate = lottoService.getExclusionRate(1);
+		assertThat(rate, greaterThan(0.866));
+		assertThat(rate, lessThan(0.867));
 	}
 	
 }

@@ -31,10 +31,18 @@ public interface LottoService {
 	 * @return 현재까지 진행된 회차 리턴
 	 */
 	public int getCurrentNumber();
-	public List<Integer> getExclusionNumber(int lottoRound, int checkRound, int sequence);
+	
+	/**
+	 * analRange 범위 만큼 분석해서 해당 라운드의 sequence 번째의 제외수목록을 반환.
+	 * @param lottoRound
+	 * @param analRange
+	 * @param sequence
+	 * @return
+	 */
+	public List<Integer> getExclusionNumber(int lottoRound, int analRange, int sequence);
 	public LottoHistory selectByRound(int round);
 	
-	public List<ExclusionAnalysis> analysisExclusion(int analysisCount, int minRange, int maxRange, int rangeIncrease
+	public List<ExclusionAnalysis> analysisExclusion(int startRound, int analysisCount, int minRange, int maxRange, int rangeIncrease
 			, int minSeq, int maxSeq);
 	
 	/**
@@ -49,5 +57,13 @@ public interface LottoService {
 	 * @throws IOException
 	 */
 	public void scheduleInsert() throws IOException;
+	
+	
+	/**
+	 * 제외수의 개수에 따라 제외될 확률을 구함.
+	 * @param count
+	 * @return
+	 */
+	public double getExclusionRate(int count);
 	
 }

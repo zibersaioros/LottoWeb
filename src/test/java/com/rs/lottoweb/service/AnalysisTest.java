@@ -1,5 +1,7 @@
 package com.rs.lottoweb.service;
 
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,18 +27,21 @@ public class AnalysisTest {
 	
 	@Test
 	public void testAnalysis(){
-		int analysisCount = 12;
-		int minRange = 30;
-		int maxRange = 150;
-		int rangeIncrease = 3;
+		int testCount = 10;
+		int analysisCount = 20;
+		int minRange = 16;
+		int maxRange = 120;
+		int rangeIncrease = 2;
 		int minSeq = 0;
-		int maxSeq = 6;
+		int maxSeq = analysisCount / 3;
 		int count = 0;
-		List<ExclusionAnalysis> analList = lottoService.analysisExclusion(analysisCount, minRange, maxRange, rangeIncrease, minSeq, maxSeq);
+		double numsCount = 0;
+		
 		StringBuffer sb = new StringBuffer();
 
-		for(int i = 0; i < analysisCount; i++){
+		for(int i = 0; i < testCount; i++){
 			int round = lottoService.getCurrentNumber() - i;
+			List<ExclusionAnalysis> analList = lottoService.analysisExclusion(round-1, analysisCount, minRange, maxRange, rangeIncrease, minSeq, maxSeq);
 			List<Integer> nums = new ArrayList<Integer>();
 			for(ExclusionAnalysis anal : analList){
 				nums.addAll(lottoService.getExclusionNumber(round, anal.getRange(), anal.getSequence()));
@@ -46,6 +51,7 @@ public class AnalysisTest {
 			LottoHistory history = lottoService.selectByRound(round);
 			
 			sb.append("round : " + round + " count : " + nums.size());
+			numsCount += nums.size();
 			
 			if(nums.contains(history.getNum1_ord())
 					|| nums.contains(history.getNum2_ord())
@@ -60,9 +66,12 @@ public class AnalysisTest {
 			count++;
 			
 		}
+		double hitRate =  count*1.0 / testCount * 100;
+		double averageRate = lottoService.getExclusionRate((int)Math.ceil(numsCount / testCount))*100;
 		System.out.println(sb);
-		System.out.printf("%f.2\n", count*1.0 / analysisCount * 100);
-		
+		System.out.printf("hitRate = %f.2\n", hitRate);
+		System.out.printf("averageRate = %f.2\n", averageRate);
+		assertThat(hitRate, greaterThan(averageRate));
 	}
 	
 }

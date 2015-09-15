@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.math3.util.CombinatoricsUtils;
+import org.apache.commons.math3.util.MathUtils;
 import org.apache.http.client.fluent.Request;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -159,7 +161,7 @@ public class LottoServiceImpl implements LottoService{
 	
 	
 	@Override
-	public List<ExclusionAnalysis> analysisExclusion(int analysisCount, int minRange, int maxRange, int rangeIncrease
+	public List<ExclusionAnalysis> analysisExclusion(int startRound, int analysisCount, int minRange, int maxRange, int rangeIncrease
 			, int minSeq, int maxSeq) {
 		
 		
@@ -173,10 +175,9 @@ public class LottoServiceImpl implements LottoService{
 				int successCount = 0;
 				for(int i = 0; i < analysisCount; i++){
 					
-					int round = getCurrentNumber() - i;
+					int round = startRound - i;
 					List<Integer> nums = getExclusionNumber(round, range, seq);
 					LottoHistory history = selectByRound(round);
-					
 					
 					if(nums.contains(history.getNum1_ord())
 							|| nums.contains(history.getNum2_ord())
@@ -201,6 +202,13 @@ public class LottoServiceImpl implements LottoService{
 		}
 		
 		return analysisList;
+	}
+
+
+	@Override
+	public double getExclusionRate(int count) {
+		return CombinatoricsUtils.binomialCoefficientDouble(39, count) 
+				/ CombinatoricsUtils.binomialCoefficientDouble(45, count);
 	}
 	
 }
