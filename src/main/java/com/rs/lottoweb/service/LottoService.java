@@ -42,6 +42,17 @@ public interface LottoService {
 	public List<Integer> getExclusionNumber(int lottoRound, int analRange, int sequence);
 	public LottoHistory selectByRound(int round);
 	
+	/**
+	 * startRound(과거회차)를 시작으로 계속 제외수 분석함.
+	 * @param startRound
+	 * @param analysisCount
+	 * @param minRange
+	 * @param maxRange
+	 * @param rangeIncrease
+	 * @param minSeq
+	 * @param maxSeq
+	 * @return
+	 */
 	public List<ExclusionAnalysis> analysisExclusion(int startRound, int analysisCount, int minRange, int maxRange, int rangeIncrease
 			, int minSeq, int maxSeq);
 	

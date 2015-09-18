@@ -28,14 +28,16 @@ public class AnalysisTest {
 	@Test
 	public void testAnalysis(){
 		int testCount = 10;
-		int analysisCount = 20;
-		int minRange = 16;
+		int analysisCount = 12;
+		int minRange = 12;
 		int maxRange = 120;
 		int rangeIncrease = 2;
 		int minSeq = 0;
-		int maxSeq = analysisCount / 3;
+		int maxSeq = 2; //analysisCount / 2;
 		int count = 0;
+		
 		double numsCount = 0;
+		int hitCount = 0;
 		
 		StringBuffer sb = new StringBuffer();
 
@@ -62,16 +64,19 @@ public class AnalysisTest {
 				sb.append(" false\n");
 				continue;
 			}
+			
+			hitCount += nums.size();
 			sb.append("\n");
 			count++;
-			
 		}
 		double hitRate =  count*1.0 / testCount * 100;
+		double realHitRate = hitCount / numsCount * 100;
 		double averageRate = lottoService.getExclusionRate((int)Math.ceil(numsCount / testCount))*100;
 		System.out.println(sb);
 		System.out.printf("hitRate = %f.2\n", hitRate);
+		System.out.printf("realHitRate = %f.2\n", realHitRate);
 		System.out.printf("averageRate = %f.2\n", averageRate);
-		assertThat(hitRate, greaterThan(averageRate));
+		assertThat(realHitRate, greaterThan(averageRate * 2));
 	}
 	
 }

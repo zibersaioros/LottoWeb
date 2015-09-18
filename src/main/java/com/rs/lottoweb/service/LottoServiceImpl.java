@@ -10,17 +10,19 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.math3.util.CombinatoricsUtils;
-import org.apache.commons.math3.util.MathUtils;
 import org.apache.http.client.fluent.Request;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import scala.annotation.meta.getter;
+
 import com.google.gson.Gson;
 import com.rs.lottoweb.domain.ExclusionAnalysis;
 import com.rs.lottoweb.domain.LottoAnalysis;
 import com.rs.lottoweb.domain.LottoHistory;
+import com.rs.lottoweb.mapper.LottoExclusionMapper;
 import com.rs.lottoweb.mapper.LottoHistoryMapper;
 
 @Service
@@ -28,17 +30,43 @@ import com.rs.lottoweb.mapper.LottoHistoryMapper;
 public class LottoServiceImpl implements LottoService{
 	
 	@Autowired
-	LottoHistoryMapper lottoMapper;
+	LottoHistoryMapper lottoHistoryMapper;
+	
+	@Autowired
+	LottoExclusionMapper lottoExclusionMapper;
+	
+	//주기적으로 제외수 분석
+	@Transactional(readOnly=false)
+	public void scheduleExclusion(){
+		int analysisCount = 12;
+		int minRange = 12;
+		int maxRange = 120;
+		int rangeIncrease = 2;
+		int minSeq = 0;
+		int maxSeq = 2; //analysisCount / 2;
+		
+		int round = getCurrentNumber() + 1;
+		List<ExclusionAnalysis> analList = analysisExclusion(
+				round-1, analysisCount, minRange, maxRange, rangeIncrease, minSeq, maxSeq);
+		List<Integer> nums = new ArrayList<Integer>();
+		for(ExclusionAnalysis anal : analList){
+			nums.addAll(getExclusionNumber(round, anal.getRange(), anal.getSequence()));
+		}
+		
+		
+		//TODO 더 작성
+	}
+	
 	
 	//주기적으로 데이터를 인서트
 	@Override
-	@Scheduled(cron="0 0 */6 * * *") //6시간마다 돌림.
+	@Scheduled(cron="0 0 */6 * * *") //12시간마다 돌림.
 	@Transactional(readOnly=false)
 	public void scheduleInsert() throws IOException{
 		String url = "http://www.lottonumber.co.kr/ajax.winnum.php?cnt=";
 		
 		// 모든 회차 가져옴.
-		List<LottoHistory> lottoList = lottoMapper.selectAllRound();
+		List<LottoHistory> lottoList = lottoHistoryMapper.selectAllRound();
 		int currentRound = getCurrentNumber();
 		
 		Gson gson = new Gson();
@@ -67,7 +95,7 @@ public class LottoServiceImpl implements LottoService{
 	@Override
 	@Transactional(readOnly=false)
 	public int insert(LottoHistory lottoHistory) {
-		return lottoMapper.insert(lottoHistory);
+		return lottoHistoryMapper.insert(lottoHistory);
 	}
 
 	@Override
@@ -82,12 +110,12 @@ public class LottoServiceImpl implements LottoService{
 			param.put("column", column);
 			param.put("start", lottoRound-1);
 			
-			List<LottoAnalysis> list = lottoMapper.selectExclusionPair(param);
+			List<LottoAnalysis> list = lottoHistoryMapper.selectExclusionPair(param);
 			list = getMaxCount(list, sequence);
 			
 			param.put("round", lottoRound);
 			param.put("list", list);
-			nums.addAll(lottoMapper.selectDiff(param));
+			nums.addAll(lottoHistoryMapper.selectDiff(param));
 		}
 		
 		nums = removeDuplicate(nums);
@@ -155,7 +183,7 @@ public class LottoServiceImpl implements LottoService{
 	
 	@Override
 	public LottoHistory selectByRound(int round) {
-		return lottoMapper.selectByRound(round);
+		return lottoHistoryMapper.selectByRound(round);
 	}
 
 	
