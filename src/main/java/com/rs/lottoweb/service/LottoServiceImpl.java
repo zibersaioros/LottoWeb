@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.math3.util.CombinatoricsUtils;
 import org.apache.http.client.fluent.Request;
@@ -16,10 +17,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import scala.annotation.meta.getter;
-
 import com.google.gson.Gson;
-import com.rs.lottoweb.domain.ExclusionAnalysis;
+import com.rs.lottoweb.domain.AnalysisResult;
 import com.rs.lottoweb.domain.LottoAnalysis;
 import com.rs.lottoweb.domain.LottoHistory;
 import com.rs.lottoweb.mapper.LottoExclusionMapper;
@@ -36,25 +35,30 @@ public class LottoServiceImpl implements LottoService{
 	LottoExclusionMapper lottoExclusionMapper;
 	
 	//주기적으로 제외수 분석
+	@Override
+	@Scheduled(cron="0 30 2 */1 * *")
 	@Transactional(readOnly=false)
 	public void scheduleExclusion(){
 		int analysisCount = 12;
-		int minRange = 12;
+		int minRange = 10;
 		int maxRange = 120;
-		int rangeIncrease = 2;
-		int minSeq = 0;
-		int maxSeq = 2; //analysisCount / 2;
+		int rangeIncrease = 5;
+		int minSeq = 4;
+		int maxSeq = 6;
 		
 		int round = getCurrentNumber() + 1;
-		List<ExclusionAnalysis> analList = analysisExclusion(
+		List<AnalysisResult> analList = analysisExclusion(
 				round-1, analysisCount, minRange, maxRange, rangeIncrease, minSeq, maxSeq);
 		List<Integer> nums = new ArrayList<Integer>();
-		for(ExclusionAnalysis anal : analList){
+		for(AnalysisResult anal : analList){
 			nums.addAll(getExclusionNumber(round, anal.getRange(), anal.getSequence()));
 		}
 		
-		
-		//TODO 더 작성
+		//nums를 돌아가면서 insert  db 커넥션을 줄이기 위해 한번에 삽입
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("round", round);
+		params.put("list", nums);
+		lottoExclusionMapper.insert(params);
 	}
 	
 	
@@ -189,14 +193,14 @@ public class LottoServiceImpl implements LottoService{
 	
 	
 	@Override
-	public List<ExclusionAnalysis> analysisExclusion(int startRound, int analysisCount, int minRange, int maxRange, int rangeIncrease
+	public List<AnalysisResult> analysisExclusion(int startRound, int analysisCount, int minRange, int maxRange, int rangeIncrease
 			, int minSeq, int maxSeq) {
 		
 		
 		int seqPlus = 1;
 		int maxSuccess = -1;
 		
-		List<ExclusionAnalysis> analysisList = new ArrayList<ExclusionAnalysis>();
+		List<AnalysisResult> analysisList = new ArrayList<AnalysisResult>();
 		
 		for(int range = minRange; range <= maxRange; range+=rangeIncrease ){
 			for(int seq = minSeq; seq <= maxSeq; seq+=seqPlus){
@@ -220,11 +224,11 @@ public class LottoServiceImpl implements LottoService{
 				
 				if(successCount > maxSuccess){
 					analysisList.clear();
-					analysisList.add(new ExclusionAnalysis(range, seq));
+					analysisList.add(new AnalysisResult(range, seq));
 					
 					maxSuccess = successCount;
 				} else if (successCount == maxSuccess){
-					analysisList.add(new ExclusionAnalysis(range, seq));
+					analysisList.add(new AnalysisResult(range, seq));
 				}
 			}
 		}
@@ -238,5 +242,109 @@ public class LottoServiceImpl implements LottoService{
 		return CombinatoricsUtils.binomialCoefficientDouble(39, count) 
 				/ CombinatoricsUtils.binomialCoefficientDouble(45, count);
 	}
+
+
+	@Override
+	public List<Integer> getAnalysedExclusionNumbers(int round) {
+		return lottoExclusionMapper.selectByRound(round);
+	}
 	
+	
+	@Override
+	public List<Integer> getFrequentNumber(int lottoRound, int analRange, int sequence) {
+		
+		HashMap<String, Object> params = new HashMap<String, Object>();
+		params.put("analRange", analRange);
+		
+		List<Integer> nums = new ArrayList<Integer>();
+		
+		for(String column : columns){
+			params.put("column", column);
+			params.put("start", lottoRound-1);
+			
+			List<LottoAnalysis> list = lottoHistoryMapper.selectFrequentPair(params);
+			list = getMaxCount(list, sequence);
+			
+			params.put("round", lottoRound);
+			params.put("list", list);
+			nums.addAll(lottoHistoryMapper.selectDiff(params));
+		}
+		
+		nums = removeDuplicate(nums);
+		return nums;
+	}
+	
+	
+	@Override
+	public List<AnalysisResult> analysisFrequent(int startRound, int analysisCount, int minRange, int maxRange, int rangeIncrease
+			, int minSeq, int maxSeq) {
+		
+		
+		int seqPlus = 1;
+		int maxSuccess = 1;
+		
+		List<AnalysisResult> analysisList = new ArrayList<AnalysisResult>();
+		
+		for(int range = minRange; range <= maxRange; range+=rangeIncrease ){
+			for(int seq = minSeq; seq <= maxSeq; seq+=seqPlus){
+				int successCount = 0;
+				for(int i = 0; i < analysisCount; i++){
+					
+					int round = startRound - i;
+					List<Integer> nums = getFrequentNumber(round, range, seq);
+					
+					if(getHitCount(nums, round) == 6 )
+						successCount++;
+				}
+				
+				if(successCount > maxSuccess){
+					analysisList.clear();
+					analysisList.add(new AnalysisResult(range, seq));
+					
+					maxSuccess = successCount;
+				} else if (successCount == maxSuccess){
+					analysisList.add(new AnalysisResult(range, seq));
+				}
+			}
+		}
+		
+		return analysisList;
+	}
+	
+
+	@Override
+	public int getHitCount(List<Integer> nums, int round){
+		int count = 0;
+		
+		LottoHistory history = selectByRound(round);
+		
+		if(nums.contains(history.getNum1_ord()))
+			count++;
+		if(nums.contains(history.getNum2_ord()))
+			count++;
+		if(nums.contains(history.getNum3_ord()))
+			count++;
+		if(nums.contains(history.getNum4_ord()))
+			count++;
+		if(nums.contains(history.getNum5_ord()))
+			count++;
+		if(nums.contains(history.getNum6_ord()))
+			count++;
+		
+		return count;
+	}
+	
+	
+	@Override
+	public String getHitRate(int all, int hitCount, int expect){
+		if(hitCount < expect
+				|| all-hitCount < 6-expect 
+				|| all < 6)
+			return "0";
+		
+		String rate = String.format("1 / %f.2",  CombinatoricsUtils.binomialCoefficientDouble(all, 6) / (CombinatoricsUtils.binomialCoefficientDouble(hitCount, expect) * CombinatoricsUtils.binomialCoefficientDouble(all-hitCount, 6-expect)));
+		
+		
+		return rate;
+	}
 }

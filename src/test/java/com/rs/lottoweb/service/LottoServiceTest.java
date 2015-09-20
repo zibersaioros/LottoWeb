@@ -3,10 +3,16 @@ package com.rs.lottoweb.service;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -14,7 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.rs.lottoweb.LottoBootApplication;
 import com.rs.lottoweb.config.AppConfig;
+import com.rs.lottoweb.domain.AnalysisResult;
 import com.rs.lottoweb.domain.LottoHistory;
+import com.rs.lottoweb.mapper.LottoExclusionMapper;
 import com.rs.lottoweb.mapper.LottoHistoryMapper;
 
 
@@ -30,6 +38,9 @@ public class LottoServiceTest {
 	@Autowired
 	LottoHistoryMapper lottoHistoryMapper;
 	
+	@Autowired
+	LottoExclusionMapper lottoExclusionMapper;
+	
 	@Before
 	public void setup(){
 		
@@ -37,6 +48,7 @@ public class LottoServiceTest {
 	
 	
 	@Test
+	@Rollback
 	public void testInsert(){
 		
 		LottoHistory lh = new LottoHistory();
@@ -87,4 +99,76 @@ public class LottoServiceTest {
 		assertThat(rate, lessThan(0.867));
 	}
 	
+	
+	@Test
+	@Rollback
+	public void testInsertExclusion(){
+		
+		List<Integer> nums = new ArrayList<Integer>();
+		for(int i = 1; i<= 7; i++){
+			nums.add(i);
+		}
+		
+		int round = lottoService.getCurrentNumber() + 1;
+		
+		//nums를 돌아가면서 insert  db 커넥션을 줄이기 위해 한번에 삽입
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("round", lottoService.getCurrentNumber()+1);
+		params.put("list", nums);
+		lottoExclusionMapper.insert(params);
+		
+		List<Integer> exclusionNums = lottoService.getAnalysedExclusionNumbers(round);
+		assertThat(exclusionNums, notNullValue());
+		assertThat(exclusionNums.size(), greaterThan(0));
+	}
+	
+	
+	@Test
+	public void testAnalysisFrequent(){
+		int testCount = 10;
+		int analysisCount = 12;
+		int minRange = 10;
+		int maxRange = 120;
+		int rangeIncrease = 5;
+		int minSeq = 0;
+		int maxSeq = 0; //analysisCount / 2;
+		int count = 0;
+
+		StringBuffer sb = new StringBuffer();
+
+		for(int i = 0; i < testCount; i++){
+			int round = lottoService.getCurrentNumber() - i;
+			List<AnalysisResult> analList = lottoService.analysisFrequent(round-1, analysisCount, minRange, maxRange, rangeIncrease, minSeq, maxSeq);
+			List<Integer> nums = new ArrayList<Integer>();
+			for(AnalysisResult anal : analList){
+				nums.addAll(lottoService.getFrequentNumber(round, anal.getRange(), anal.getSequence()));
+			}
+
+			nums = lottoService.removeDuplicate(nums);
+			LottoHistory history = lottoService.selectByRound(round);
+
+			int hitCount = lottoService.getHitCount(nums, round) ;
+			
+			sb.append("round : " + round + " count : " + nums.size());
+			sb.append(" hit : " + hitCount +"\n");
+			
+			for(int expect = 6 ; expect >2; expect--){
+				sb.append(expect + " : " + lottoService.getHitRate(nums.size(), hitCount, expect) + "\n");
+			}
+			 
+			// 1등 당첨 확률 : hitCount C 6 * all - hitCount C 0 /  all C 6 
+			// 3등 당첨 확률 : hitCount C 5 * all-hitcount C 1     / all C 6
+			// 4등 당첨 확률 : hitCount C 4 * all - hitCount C 2 / allC6
+			// 5등 당첨 확률 : hitCount C 3 * all - hitCount C 3 / allC6
+			
+			
+			if(hitCount == 6)
+				count++;
+
+			sb.append("\n");
+		}
+		double hitRate =  count * 1.0 / testCount * 100;
+		System.out.println(sb);
+		System.out.printf("hitRate = %f.2\n", hitRate);
+	}
 }
