@@ -28,6 +28,8 @@ import com.rs.lottoweb.mapper.LottoHistoryMapper;
 @Transactional(readOnly=true)
 public class LottoServiceImpl implements LottoService{
 	
+	private Map<String, List<LottoAnalysis>> exclusionCache = new HashMap<String, List<LottoAnalysis>>();
+	
 	@Autowired
 	LottoHistoryMapper lottoHistoryMapper;
 	
@@ -111,10 +113,16 @@ public class LottoServiceImpl implements LottoService{
 		List<Integer> nums = new ArrayList<Integer>();
 		
 		for(String column : columns){
+			int start = lottoRound - 1;
 			param.put("column", column);
-			param.put("start", lottoRound-1);
+			param.put("start", start);
 			
-			List<LottoAnalysis> list = lottoHistoryMapper.selectExclusionPair(param);
+			List<LottoAnalysis> list = exclusionCache.get(start + column + analRange);
+			if(list == null){
+				list = lottoHistoryMapper.selectExclusionPair(param);
+				exclusionCache.put(start + column + analRange, list);
+			}
+			
 			list = getMaxCount(list, sequence);
 			
 			param.put("round", lottoRound);
@@ -196,14 +204,12 @@ public class LottoServiceImpl implements LottoService{
 	public List<AnalysisResult> analysisExclusion(int startRound, int analysisCount, int minRange, int maxRange, int rangeIncrease
 			, int minSeq, int maxSeq) {
 		
-		
-		int seqPlus = 1;
 		int maxSuccess = -1;
 		
 		List<AnalysisResult> analysisList = new ArrayList<AnalysisResult>();
 		
 		for(int range = minRange; range <= maxRange; range+=rangeIncrease ){
-			for(int seq = minSeq; seq <= maxSeq; seq+=seqPlus){
+			for(int seq = (minSeq == 0 ? 0 : (int)Math.round(range / (minRange*1.0 / minSeq))) ; seq <= (maxSeq == 0 ? 0 : Math.round(range / (minRange*1.0 / maxSeq))); seq+= Math.round(range / minRange*1.0)){
 				int successCount = 0;
 				for(int i = 0; i < analysisCount; i++){
 					
@@ -232,7 +238,7 @@ public class LottoServiceImpl implements LottoService{
 				}
 			}
 		}
-		
+	
 		return analysisList;
 	}
 
@@ -346,5 +352,10 @@ public class LottoServiceImpl implements LottoService{
 		
 		
 		return rate;
+	}
+	
+	@Override
+	public void clearExclusionCache(){
+		exclusionCache.clear();
 	}
 }

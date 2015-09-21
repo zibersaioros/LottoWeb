@@ -27,15 +27,14 @@ public class AnalysisTest {
 	LottoService lottoService;
 
 	@Test
-	@Ignore
 	public void testAnalysisExclusion(){
-		int testCount = 10;
-		int analysisCount = 12;
-		int minRange = 10;
-		int maxRange = 120;
-		int rangeIncrease = 5;
-		int minSeq = 4;
-		int maxSeq = 6; //analysisCount / 2;
+		int testCount = 20;
+		int analysisCount = 20;
+		int minRange = 4;
+		int maxRange = 13;
+		int rangeIncrease = 1;
+		int minSeq = 0;
+		int maxSeq = 2; //analysisCount / 2;
 		int count = 0;
 
 		double numsCount = 0;
@@ -43,6 +42,8 @@ public class AnalysisTest {
 
 		StringBuffer sb = new StringBuffer();
 
+		
+		lottoService.clearExclusionCache();
 		for(int i = 0; i < testCount; i++){
 			int round = lottoService.getCurrentNumber() - i;
 			List<AnalysisResult> analList = lottoService.analysisExclusion(round-1, analysisCount, minRange, maxRange, rangeIncrease, minSeq, maxSeq);
@@ -83,15 +84,18 @@ public class AnalysisTest {
 
 
 	@Test
+	@Ignore
 	public void testAnalysisFrequent(){
 		int testCount = 10;
 		int analysisCount = 12;
 		int minRange = 10;
 		int maxRange = 120;
-		int rangeIncrease = 5;
+		int rangeIncrease = 10;
 		int minSeq = 0;
-		int maxSeq = 0; //analysisCount / 2;
-		int count = 0;
+		int maxSeq = 1; //analysisCount / 2;
+		
+		int numSum = 0;
+		int hitSum = 0;
 
 		StringBuffer sb = new StringBuffer();
 
@@ -104,30 +108,23 @@ public class AnalysisTest {
 			}
 
 			nums = lottoService.removeDuplicate(nums);
-			LottoHistory history = lottoService.selectByRound(round);
 
 			int hitCount = lottoService.getHitCount(nums, round) ;
 			
 			sb.append("round : " + round + " count : " + nums.size());
 			sb.append(" hit : " + hitCount +"\n");
 			
-			for(int expect = 6 ; expect >2; expect--){
+			for(int expect = 6 ; expect > 2; expect--){
 				sb.append(expect + " : " + lottoService.getHitRate(nums.size(), hitCount, expect) + "\n");
 			}
-			 
-			// 1등 당첨 확률 : hitCount C 6 * all - hitCount C 0 /  all C 6 
-			// 3등 당첨 확률 : hitCount C 5 * all-hitcount C 1     / all C 6
-			// 4등 당첨 확률 : hitCount C 4 * all - hitCount C 2 / allC6
-			// 5등 당첨 확률 : hitCount C 3 * all - hitCount C 3 / allC6
-			
-			
-			if(hitCount == 6)
-				count++;
 
 			sb.append("\n");
+			
+			numSum += nums.size();
+			hitSum += hitCount;
 		}
-		double hitRate =  count * 1.0 / testCount * 100;
+		
 		System.out.println(sb);
-		System.out.printf("hitRate = %f.2\n", hitRate);
+		System.out.printf("hitRate = %f.2\n", hitSum*1.0 / numSum * 100);
 	}
 }

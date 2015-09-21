@@ -130,4 +130,10 @@ public interface LottoService {
 	 * @return
 	 */
 	public String getHitRate(int all, int hitCount, int expect);
+	
+	
+	/**
+	 * 제외수 분석 캐시 삭제
+	 */
+	public void clearExclusionCache();
 }
