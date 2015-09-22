@@ -28,7 +28,9 @@ import com.rs.lottoweb.mapper.LottoHistoryMapper;
 @Transactional(readOnly=true)
 public class LottoServiceImpl implements LottoService{
 	
-	private Map<String, List<LottoAnalysis>> exclusionCache = new HashMap<String, List<LottoAnalysis>>();
+	private Map<String, List<LottoAnalysis>> pairCache = new HashMap<String, List<LottoAnalysis>>();
+	private Map<String, List<Integer>> sequenceCache = new HashMap<String, List<Integer>>();
+	
 	
 	@Autowired
 	LottoHistoryMapper lottoHistoryMapper;
@@ -110,17 +112,24 @@ public class LottoServiceImpl implements LottoService{
 		HashMap<String, Object> param = new HashMap<String, Object>();
 		param.put("analRange", analRange);
 		
-		List<Integer> nums = new ArrayList<Integer>();
+		String key = new StringBuffer().append(lottoRound).append("_").append(analRange).append("_").append(sequence).toString();
+		List<Integer> nums = sequenceCache.get(key);
+		if(nums != null){
+			return nums;
+		}
 		
+		nums = new ArrayList<Integer>();
 		for(String column : columns){
 			int start = lottoRound - 1;
 			param.put("column", column);
 			param.put("start", start);
 			
-			List<LottoAnalysis> list = exclusionCache.get(start + column + analRange);
+			String pairKey = start + column + analRange;
+			
+			List<LottoAnalysis> list = pairCache.get(pairKey);
 			if(list == null){
 				list = lottoHistoryMapper.selectExclusionPair(param);
-				exclusionCache.put(start + column + analRange, list);
+				pairCache.put(pairKey, list);
 			}
 			
 			list = getMaxCount(list, sequence);
@@ -131,6 +140,7 @@ public class LottoServiceImpl implements LottoService{
 		}
 		
 		nums = removeDuplicate(nums);
+		sequenceCache.put(key	, nums);
 		return nums;
 	}
 	
@@ -355,7 +365,8 @@ public class LottoServiceImpl implements LottoService{
 	}
 	
 	@Override
-	public void clearExclusionCache(){
-		exclusionCache.clear();
+	public void clearAllCache(){
+		pairCache.clear();
+		sequenceCache.clear();
 	}
 }

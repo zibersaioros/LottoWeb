@@ -133,7 +133,7 @@ public interface LottoService {
 	
 	
 	/**
-	 * 제외수 분석 캐시 삭제
+	 * 모든 분석 캐시 삭제
 	 */
-	public void clearExclusionCache();
+	public void clearAllCache();
 }
