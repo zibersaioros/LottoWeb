@@ -42,12 +42,12 @@ public class AnalysisTest {
 		StringBuffer sb = new StringBuffer();
 		lottoService.clearAllCache();;
 
-		for(analysisCount = 12 ; analysisCount <= 12; analysisCount++){
-			for(minRange = 12 ; minRange <= 12; minRange += 4){
-				for(maxRange = 60; maxRange <= 60; maxRange += 4){
-					for(rangeIncrease = 2; rangeIncrease <= 2; rangeIncrease++){
-						for(minSeq = 0; minSeq <= 0;  minSeq++){
-							for(maxSeq = 6; maxSeq <= 6; maxSeq++){
+		for(analysisCount = 11 ; analysisCount <= 13; analysisCount++){
+			for(minRange = 12 ; minRange <= 20; minRange += 4){
+				for(maxRange = 52; maxRange <= 60; maxRange += 4){
+					for(rangeIncrease = 2; rangeIncrease <= 3; rangeIncrease++){
+						for(minSeq = 0; minSeq <= 2;  minSeq++){
+							for(maxSeq = 4; maxSeq <= 6; maxSeq++){
 								int count = 0;	
 								double numsCount = 0;
 								int hitCount = 0;
@@ -89,8 +89,13 @@ public class AnalysisTest {
 									subBuffer.append("\n");
 									count++;
 								}
+								
+								if(Math.ceil(numsCount / testCount) > 38)
+									continue;
+								
 								double hitRate =  count*1.0 / testCount * 100;
 								double realHitRate = hitCount / numsCount * 100;
+								
 								double averageRate = lottoService.getExclusionRate((int)Math.ceil(numsCount / testCount))*100;
 								subBuffer.append(String.format("hitRate = %f.2\n", hitRate));
 								subBuffer.append(String.format("realHitRate = %f.2\n", realHitRate));

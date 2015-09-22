@@ -225,6 +225,8 @@ public class LottoServiceImpl implements LottoService{
 					
 					int round = startRound - i;
 					List<Integer> nums = getExclusionNumber(round, range, seq);
+					if(nums.size() > 39)
+						continue;
 					LottoHistory history = selectByRound(round);
 					
 					if(nums.contains(history.getNum1_ord())
