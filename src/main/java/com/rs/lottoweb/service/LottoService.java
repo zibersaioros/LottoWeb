@@ -122,6 +122,16 @@ public interface LottoService {
 	 */
 	public int getHitCount(List<Integer> nums, int round);
 	
+	
+	/**
+	 * 
+	 * @param all
+	 * @param hitCount
+	 * @param expect
+	 * @return
+	 */
+	public double getHitRateDenominator(int all, int hitCount, int expect);
+	
 	/**
 	 * 주어진 숫자에 해당하는 확률을 분수 형태 문자열로 리턴.
 	 * @param all
@@ -129,7 +139,7 @@ public interface LottoService {
 	 * @param expect
 	 * @return
 	 */
-	public String getHitRate(int all, int hitCount, int expect);
+	public String getHitRateString(int all, int hitCount, int expect);
 	
 	
 	/**

@@ -370,13 +370,22 @@ public class LottoServiceImpl implements LottoService{
 	
 	
 	@Override
-	public String getHitRate(int all, int hitCount, int expect){
+	public double getHitRateDenominator(int all, int hitCount, int expect){
+		try {
+			return CombinatoricsUtils.binomialCoefficientDouble(all, 6) / (CombinatoricsUtils.binomialCoefficientDouble(hitCount, expect) * CombinatoricsUtils.binomialCoefficientDouble(all-hitCount, 6-expect));
+		} catch (Exception e) {
+			return -1;
+		}
+	}
+	
+	@Override
+	public String getHitRateString(int all, int hitCount, int expect){
 		if(hitCount < expect
 				|| all-hitCount < 6-expect 
 				|| all < 6)
 			return "0";
 		
-		String rate = String.format("1 / %f.2",  CombinatoricsUtils.binomialCoefficientDouble(all, 6) / (CombinatoricsUtils.binomialCoefficientDouble(hitCount, expect) * CombinatoricsUtils.binomialCoefficientDouble(all-hitCount, 6-expect)));
+		String rate = String.format("1 / %f.2", getHitRateDenominator(all, hitCount, expect));
 		
 		return rate;
 	}

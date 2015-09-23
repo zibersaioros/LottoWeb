@@ -171,13 +171,13 @@ public class AnalysisTest {
 		int minSeq = 0;
 		int maxSeq = 1; //analysisCount / 2;
 
-		int numSum = 0;
-		int hitSum = 0;
+		double forthSum = 0;
 
 		StringBuffer sb = new StringBuffer();
 		lottoService.clearAllCache();
 		
-		int standard4 = lottoService.getHitRate(45, 6, 4);
+		double standard4 = lottoService.getHitRateDenominator(45, 6, 4);
+		double max4 = lottoService.getHitRateDenominator(43, 4, 4);
 		
 		for(analysisCount = 11 ; analysisCount <= 13; analysisCount++){
 			for(minRange = 12 ; minRange <= 20; minRange += 4){
@@ -210,16 +210,16 @@ public class AnalysisTest {
 									subBuffer.append("round : " + round + " count : " + nums.size());
 									subBuffer.append(" hit : " + hitCount +"\n");
 									
-									lottoService.getHitRate(nums.size(), hitCount);
-
-//									for(int expect = 6 ; expect > 3; expect--){
-//										subBuffer.append(expect + " : " + lottoService.getHitRate(nums.size(), hitCount, expect) + "\n");
-//									}
-
+									for(int expect = 6 ; expect > 3; expect--){
+										subBuffer.append(expect + " : " + lottoService.getHitRateString(nums.size(), hitCount, expect) + "\n");
+									}
+									
 									subBuffer.append("\n");
-
-									numSum += nums.size();
-									hitSum += hitCount;
+									
+									double forthRate = lottoService.getHitRateDenominator(nums.size(), hitCount, 4);
+									forthRate = (forthRate <= 0) ? max4 : forthRate;
+									
+									forthSum += forthRate;
 								}
 								
 								if(Math.ceil(numsCount / testCount) > 38)
