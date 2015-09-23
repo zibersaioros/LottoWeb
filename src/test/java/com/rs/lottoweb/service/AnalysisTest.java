@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import scala.collection.generic.Clearable;
+
 import com.rs.lottoweb.LottoBootApplication;
 import com.rs.lottoweb.domain.AnalysisResult;
 import com.rs.lottoweb.domain.LottoHistory;
@@ -30,6 +32,7 @@ public class AnalysisTest {
 	LottoService lottoService;
 
 	@Test
+	@Ignore
 	public void testAnalysisExclusion(){
 		int testCount = 20;
 		int analysisCount = 13;
@@ -159,9 +162,8 @@ public class AnalysisTest {
 
 
 	@Test
-	@Ignore
 	public void testAnalysisFrequent(){
-		int testCount = 10;
+		int testCount = 20;
 		int analysisCount = 12;
 		int minRange = 10;
 		int maxRange = 120;
@@ -173,7 +175,87 @@ public class AnalysisTest {
 		int hitSum = 0;
 
 		StringBuffer sb = new StringBuffer();
+		lottoService.clearAllCache();
+		
+		int standard4 = lottoService.getHitRate(45, 6, 4);
+		
+		for(analysisCount = 11 ; analysisCount <= 13; analysisCount++){
+			for(minRange = 12 ; minRange <= 20; minRange += 4){
+				for(maxRange = 52; maxRange <= 60; maxRange += 4){
+					for(rangeIncrease = 2; rangeIncrease <= 3; rangeIncrease++){
+						for(minSeq = 0; minSeq <= 2;  minSeq++){
+							for(maxSeq = 4; maxSeq <= 6; maxSeq++){
+								
+								StringBuffer subBuffer = new StringBuffer();
+								subBuffer.append("testCount = " + testCount + "\n");
+								subBuffer.append("analysisCount = " + analysisCount + "\n");
+								subBuffer.append("minRange = " + minRange + "\n");
+								subBuffer.append("maxRange = " + maxRange + "\n");
+								subBuffer.append("rangeIncrease = " + rangeIncrease + "\n");
+								subBuffer.append("minSeq = " + minSeq + "\n");
+								subBuffer.append("maxSeq = " + maxSeq + "\n");
+								
+								for(int i = 0; i < testCount; i++){
+									int round = lottoService.getCurrentNumber() - i;
+									List<AnalysisResult> analList = lottoService.analysisFrequent(round-1, analysisCount, minRange, maxRange, rangeIncrease, minSeq, maxSeq);
+									List<Integer> nums = new ArrayList<Integer>();
+									for(AnalysisResult anal : analList){
+										nums.addAll(lottoService.getFrequentNumber(round, anal.getRange(), anal.getSequence()));
+									}
 
+									nums = lottoService.removeDuplicate(nums);
+
+									int hitCount = lottoService.getHitCount(nums, round) ;
+
+									subBuffer.append("round : " + round + " count : " + nums.size());
+									subBuffer.append(" hit : " + hitCount +"\n");
+									
+									lottoService.getHitRate(nums.size(), hitCount);
+
+//									for(int expect = 6 ; expect > 3; expect--){
+//										subBuffer.append(expect + " : " + lottoService.getHitRate(nums.size(), hitCount, expect) + "\n");
+//									}
+
+									subBuffer.append("\n");
+
+									numSum += nums.size();
+									hitSum += hitCount;
+								}
+								
+								if(Math.ceil(numsCount / testCount) > 38)
+									continue;
+								
+								double hitRate =  count*1.0 / testCount * 100;
+								double realHitRate = hitCount / numsCount * 100;
+								
+								double averageRate = lottoService.getExclusionRate((int)Math.ceil(numsCount / testCount))*100;
+								subBuffer.append(String.format("hitRate = %f.2\n", hitRate));
+								subBuffer.append(String.format("realHitRate = %f.2\n", realHitRate));
+								subBuffer.append(String.format("averageRate = %f.2\n", averageRate));
+								subBuffer.append("=====================================\n");
+								if(realHitRate > averageRate * 2)
+									sb.append(subBuffer);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		System.out.println(sb.toString());
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("target", "analysisResult.txt")));
+			bw.write(sb.toString());
+			bw.flush();
+			bw.close();
+		} catch (Exception e) {}
+		
+		
+		
+		
+		
+		
+		
 		for(int i = 0; i < testCount; i++){
 			int round = lottoService.getCurrentNumber() - i;
 			List<AnalysisResult> analList = lottoService.analysisFrequent(round-1, analysisCount, minRange, maxRange, rangeIncrease, minSeq, maxSeq);

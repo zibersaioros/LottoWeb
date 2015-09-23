@@ -28,8 +28,11 @@ import com.rs.lottoweb.mapper.LottoHistoryMapper;
 @Transactional(readOnly=true)
 public class LottoServiceImpl implements LottoService{
 	
-	private Map<String, List<LottoAnalysis>> pairCache = new HashMap<String, List<LottoAnalysis>>();
-	private Map<String, List<Integer>> sequenceCache = new HashMap<String, List<Integer>>();
+	private Map<String, List<LottoAnalysis>> pairExclusionCache = new HashMap<String, List<LottoAnalysis>>();
+	private Map<String, List<Integer>> seqExclusionCache = new HashMap<String, List<Integer>>();
+	
+	private Map<String, List<LottoAnalysis>> pairFrequentCache = new HashMap<String, List<LottoAnalysis>>();
+	private Map<String, List<Integer>> seqFrequentCache = new HashMap<String, List<Integer>>();
 	
 	
 	@Autowired
@@ -109,15 +112,14 @@ public class LottoServiceImpl implements LottoService{
 	@Override
 	public List<Integer> getExclusionNumber(int lottoRound, int analRange, int sequence) {
 		
-		HashMap<String, Object> param = new HashMap<String, Object>();
-		param.put("analRange", analRange);
-		
 		String key = new StringBuffer().append(lottoRound).append("_").append(analRange).append("_").append(sequence).toString();
-		List<Integer> nums = sequenceCache.get(key);
+		List<Integer> nums = seqExclusionCache.get(key);
 		if(nums != null){
 			return nums;
 		}
 		
+		HashMap<String, Object> param = new HashMap<String, Object>();
+		param.put("analRange", analRange);
 		nums = new ArrayList<Integer>();
 		for(String column : columns){
 			int start = lottoRound - 1;
@@ -126,10 +128,10 @@ public class LottoServiceImpl implements LottoService{
 			
 			String pairKey = start + column + analRange;
 			
-			List<LottoAnalysis> list = pairCache.get(pairKey);
+			List<LottoAnalysis> list = pairExclusionCache.get(pairKey);
 			if(list == null){
 				list = lottoHistoryMapper.selectExclusionPair(param);
-				pairCache.put(pairKey, list);
+				pairExclusionCache.put(pairKey, list);
 			}
 			
 			list = getMaxCount(list, sequence);
@@ -140,7 +142,7 @@ public class LottoServiceImpl implements LottoService{
 		}
 		
 		nums = removeDuplicate(nums);
-		sequenceCache.put(key	, nums);
+		seqExclusionCache.put(key	, nums);
 		return nums;
 	}
 	
@@ -271,16 +273,29 @@ public class LottoServiceImpl implements LottoService{
 	@Override
 	public List<Integer> getFrequentNumber(int lottoRound, int analRange, int sequence) {
 		
+		String key = new StringBuffer().append(lottoRound).append("_").append(analRange).append("_").append(sequence).toString();
+		List<Integer> nums = seqFrequentCache.get(key);
+		if(nums != null){
+			return nums;
+		}
+		
+		
 		HashMap<String, Object> params = new HashMap<String, Object>();
 		params.put("analRange", analRange);
 		
-		List<Integer> nums = new ArrayList<Integer>();
+		nums = new ArrayList<Integer>();
 		
 		for(String column : columns){
+			int start = lottoRound-1;
 			params.put("column", column);
-			params.put("start", lottoRound-1);
+			params.put("start", start);
 			
-			List<LottoAnalysis> list = lottoHistoryMapper.selectFrequentPair(params);
+			String pairKey = start + column + analRange;
+			List<LottoAnalysis> list = pairFrequentCache.get(pairKey);
+			if(list == null){
+				list = lottoHistoryMapper.selectFrequentPair(params);
+				pairFrequentCache.put(pairKey, list);
+			}
 			list = getMaxCount(list, sequence);
 			
 			params.put("round", lottoRound);
@@ -289,6 +304,7 @@ public class LottoServiceImpl implements LottoService{
 		}
 		
 		nums = removeDuplicate(nums);
+		seqFrequentCache.put(key, nums);
 		return nums;
 	}
 	
@@ -311,7 +327,7 @@ public class LottoServiceImpl implements LottoService{
 					int round = startRound - i;
 					List<Integer> nums = getFrequentNumber(round, range, seq);
 					
-					if(getHitCount(nums, round) == 6 )
+					if(nums.size() < 45 && getHitCount(nums, round) == 6 )
 						successCount++;
 				}
 				
@@ -362,13 +378,12 @@ public class LottoServiceImpl implements LottoService{
 		
 		String rate = String.format("1 / %f.2",  CombinatoricsUtils.binomialCoefficientDouble(all, 6) / (CombinatoricsUtils.binomialCoefficientDouble(hitCount, expect) * CombinatoricsUtils.binomialCoefficientDouble(all-hitCount, 6-expect)));
 		
-		
 		return rate;
 	}
 	
 	@Override
 	public void clearAllCache(){
-		pairCache.clear();
-		sequenceCache.clear();
+		pairExclusionCache.clear();
+		seqExclusionCache.clear();
 	}
 }
