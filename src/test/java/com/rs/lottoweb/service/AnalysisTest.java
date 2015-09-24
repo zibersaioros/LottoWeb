@@ -194,6 +194,7 @@ public class AnalysisTest {
 								subBuffer.append("rangeIncrease = " + rangeIncrease + "\n");
 								subBuffer.append("minSeq = " + minSeq + "\n");
 								subBuffer.append("maxSeq = " + maxSeq + "\n");
+								int hit4Count = 0;
 								
 								for(int i = 0; i < testCount; i++){
 									int round = lottoService.getCurrentNumber() - i;
@@ -205,35 +206,30 @@ public class AnalysisTest {
 
 									nums = lottoService.removeDuplicate(nums);
 
+									//각각 확률 계산.
 									int hitCount = lottoService.getHitCount(nums, round) ;
-
 									subBuffer.append("round : " + round + " count : " + nums.size());
 									subBuffer.append(" hit : " + hitCount +"\n");
-									
 									for(int expect = 6 ; expect > 3; expect--){
 										subBuffer.append(expect + " : " + lottoService.getHitRateString(nums.size(), hitCount, expect) + "\n");
 									}
-									
 									subBuffer.append("\n");
 									
+									//4등 확률 계산.
 									double forthRate = lottoService.getHitRateDenominator(nums.size(), hitCount, 4);
 									forthRate = (forthRate <= 0) ? max4 : forthRate;
+									
+									if(forthRate < standard4)
+										hit4Count++;
 									
 									forthSum += forthRate;
 								}
 								
-								if(Math.ceil(numsCount / testCount) > 38)
-									continue;
-								
-								double hitRate =  count*1.0 / testCount * 100;
-								double realHitRate = hitCount / numsCount * 100;
-								
-								double averageRate = lottoService.getExclusionRate((int)Math.ceil(numsCount / testCount))*100;
-								subBuffer.append(String.format("hitRate = %f.2\n", hitRate));
-								subBuffer.append(String.format("realHitRate = %f.2\n", realHitRate));
-								subBuffer.append(String.format("averageRate = %f.2\n", averageRate));
+								subBuffer.append(String.format("hitRate = %f.2\n", hit4Count / testCount * 100));
+								subBuffer.append(String.format("real4Rate = 1/%f.2\n", forthSum / testCount));
+								subBuffer.append(String.format("averageRate = 1/%f.2\n", standard4));
 								subBuffer.append("=====================================\n");
-								if(realHitRate > averageRate * 2)
+								if(forthSum / testCount < standard4)
 									sb.append(subBuffer);
 							}
 						}
@@ -244,44 +240,10 @@ public class AnalysisTest {
 
 		System.out.println(sb.toString());
 		try {
-			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("target", "analysisResult.txt")));
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("target", "analysisFrequentResult.txt")));
 			bw.write(sb.toString());
 			bw.flush();
 			bw.close();
 		} catch (Exception e) {}
-		
-		
-		
-		
-		
-		
-		
-		for(int i = 0; i < testCount; i++){
-			int round = lottoService.getCurrentNumber() - i;
-			List<AnalysisResult> analList = lottoService.analysisFrequent(round-1, analysisCount, minRange, maxRange, rangeIncrease, minSeq, maxSeq);
-			List<Integer> nums = new ArrayList<Integer>();
-			for(AnalysisResult anal : analList){
-				nums.addAll(lottoService.getFrequentNumber(round, anal.getRange(), anal.getSequence()));
-			}
-
-			nums = lottoService.removeDuplicate(nums);
-
-			int hitCount = lottoService.getHitCount(nums, round) ;
-
-			sb.append("round : " + round + " count : " + nums.size());
-			sb.append(" hit : " + hitCount +"\n");
-
-			for(int expect = 6 ; expect > 2; expect--){
-				sb.append(expect + " : " + lottoService.getHitRate(nums.size(), hitCount, expect) + "\n");
-			}
-
-			sb.append("\n");
-
-			numSum += nums.size();
-			hitSum += hitCount;
-		}
-
-		System.out.println(sb);
-		System.out.printf("hitRate = %f.2\n", hitSum*1.0 / numSum * 100);
 	}
 }
