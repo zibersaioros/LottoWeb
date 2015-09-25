@@ -153,7 +153,7 @@ public class LottoServiceTest {
 			sb.append(" hit : " + hitCount +"\n");
 			
 			for(int expect = 6 ; expect >2; expect--){
-				sb.append(expect + " : " + lottoService.getHitRate(nums.size(), hitCount, expect) + "\n");
+				sb.append(expect + " : " + lottoService.getHitRateString(nums.size(), hitCount, expect) + "\n");
 			}
 			 
 			// 1등 당첨 확률 : hitCount C 6 * all - hitCount C 0 /  all C 6 

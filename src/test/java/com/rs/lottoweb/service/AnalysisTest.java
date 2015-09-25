@@ -171,8 +171,6 @@ public class AnalysisTest {
 		int minSeq = 0;
 		int maxSeq = 1; //analysisCount / 2;
 
-		double forthSum = 0;
-
 		StringBuffer sb = new StringBuffer();
 		lottoService.clearAllCache();
 		
@@ -180,11 +178,14 @@ public class AnalysisTest {
 		double max4 = lottoService.getHitRateDenominator(43, 4, 4);
 		
 		for(analysisCount = 11 ; analysisCount <= 13; analysisCount++){
-			for(minRange = 12 ; minRange <= 20; minRange += 4){
-				for(maxRange = 52; maxRange <= 60; maxRange += 4){
-					for(rangeIncrease = 2; rangeIncrease <= 3; rangeIncrease++){
+			for(minRange = 36; minRange <= 52; minRange += 4){
+				for(maxRange = 112; maxRange <= 124; maxRange += 4){
+					for(rangeIncrease = 4; rangeIncrease <= 5; rangeIncrease++){
 						for(minSeq = 0; minSeq <= 2;  minSeq++){
-							for(maxSeq = 4; maxSeq <= 6; maxSeq++){
+							for(maxSeq = 0; maxSeq <= 6; maxSeq++){
+								
+								if(maxSeq < minSeq)
+									continue;
 								
 								StringBuffer subBuffer = new StringBuffer();
 								subBuffer.append("testCount = " + testCount + "\n");
@@ -195,6 +196,7 @@ public class AnalysisTest {
 								subBuffer.append("minSeq = " + minSeq + "\n");
 								subBuffer.append("maxSeq = " + maxSeq + "\n");
 								int hit4Count = 0;
+								double forthSum = 0;
 								
 								for(int i = 0; i < testCount; i++){
 									int round = lottoService.getCurrentNumber() - i;
@@ -225,7 +227,7 @@ public class AnalysisTest {
 									forthSum += forthRate;
 								}
 								
-								subBuffer.append(String.format("hitRate = %f.2\n", hit4Count / testCount * 100));
+								subBuffer.append(String.format("hitRate = %f.2\n", hit4Count * 1.0 / testCount * 100));
 								subBuffer.append(String.format("real4Rate = 1/%f.2\n", forthSum / testCount));
 								subBuffer.append(String.format("averageRate = 1/%f.2\n", standard4));
 								subBuffer.append("=====================================\n");
