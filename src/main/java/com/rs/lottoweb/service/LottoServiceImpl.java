@@ -22,6 +22,7 @@ import com.rs.lottoweb.domain.AnalysisResult;
 import com.rs.lottoweb.domain.LottoAnalysis;
 import com.rs.lottoweb.domain.LottoHistory;
 import com.rs.lottoweb.mapper.LottoExclusionMapper;
+import com.rs.lottoweb.mapper.LottoFrequentMapper;
 import com.rs.lottoweb.mapper.LottoHistoryMapper;
 
 @Service
@@ -41,31 +42,58 @@ public class LottoServiceImpl implements LottoService{
 	@Autowired
 	LottoExclusionMapper lottoExclusionMapper;
 	
+	@Autowired 
+	LottoFrequentMapper lottoFrequentMapper;
+	
 	//주기적으로 제외수 분석
 	@Override
 	@Scheduled(cron="0 30 2 */1 * *")
 	@Transactional(readOnly=false)
-	public void scheduleExclusion(){
-		int analysisCount = 12;
-		int minRange = 10;
-		int maxRange = 120;
-		int rangeIncrease = 5;
-		int minSeq = 4;
-		int maxSeq = 6;
+	public void scheduleAnalysis(){
+		clearAllCache();
+		
+		//TODO 환경변수에서 가져와야 함!
+		int analysisCount = 11;
+		int minRange = 12;
+		int maxRange = 160;
+		int rangeIncrease = 2;
+		int minSeq = 0;
+		int maxSeq = 5;
 		
 		int round = getCurrentNumber() + 1;
 		List<AnalysisResult> analList = analysisExclusion(
 				round-1, analysisCount, minRange, maxRange, rangeIncrease, minSeq, maxSeq);
-		List<Integer> nums = new ArrayList<Integer>();
+		List<Integer> exclusionNums = new ArrayList<Integer>();
 		for(AnalysisResult anal : analList){
-			nums.addAll(getExclusionNumber(round, anal.getRange(), anal.getSequence()));
+			exclusionNums.addAll(getExclusionNumber(round, anal.getRange(), anal.getSequence()));
 		}
+		
+		exclusionNums = removeDuplicate(exclusionNums);
 		
 		//nums를 돌아가면서 insert  db 커넥션을 줄이기 위해 한번에 삽입
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("round", round);
-		params.put("list", nums);
+		params.put("list", exclusionNums);
 		lottoExclusionMapper.insert(params);
+		
+		//TODO 환경변수에서 가져와야 함!! 추천수를 가져온다.
+		analysisCount = 12;
+		minRange = 8;
+		maxRange = 120;
+		rangeIncrease = 5;
+		minSeq = 0;
+		maxSeq = 3; //analysisCount / 2;
+
+		List<AnalysisResult> frequentList = analysisFrequent(round-1, analysisCount, minRange, maxRange, rangeIncrease, minSeq, maxSeq);
+		List<Integer> frequentNums = new ArrayList<Integer>();
+		for(AnalysisResult anal : frequentList){
+			frequentNums.addAll(getFrequentNumber(round, anal.getRange(), anal.getSequence()));
+		}
+		frequentNums = removeDuplicate(frequentNums);
+		frequentNums.removeAll(exclusionNums);
+		
+		params.put("list", frequentNums);
+		lottoFrequentMapper.insert(params);
 	}
 	
 	
@@ -273,25 +301,27 @@ public class LottoServiceImpl implements LottoService{
 	@Override
 	public List<Integer> getFrequentNumber(int lottoRound, int analRange, int sequence) {
 		
+		// 시퀀스 캐시에 있으면 찾아서 리턴.
 		String key = new StringBuffer().append(lottoRound).append("_").append(analRange).append("_").append(sequence).toString();
 		List<Integer> nums = seqFrequentCache.get(key);
 		if(nums != null){
 			return nums;
 		}
 		
-		
+		//캐시에 없는 경우 DB에서 분석결과를 가져온다.
 		HashMap<String, Object> params = new HashMap<String, Object>();
 		params.put("analRange", analRange);
-		
 		nums = new ArrayList<Integer>();
-		
 		for(String column : columns){
 			int start = lottoRound-1;
 			params.put("column", column);
 			params.put("start", start);
 			
+			//캐시에서 분석결과를 가져온다.
 			String pairKey = start + column + analRange;
 			List<LottoAnalysis> list = pairFrequentCache.get(pairKey);
+			
+			//캐시에 없는경우 DB에서 분석결과를 가져온다.
 			if(list == null){
 				list = lottoHistoryMapper.selectFrequentPair(params);
 				pairFrequentCache.put(pairKey, list);
@@ -393,6 +423,15 @@ public class LottoServiceImpl implements LottoService{
 	@Override
 	public void clearAllCache(){
 		pairExclusionCache.clear();
+		pairFrequentCache.clear();
 		seqExclusionCache.clear();
+		seqFrequentCache.clear();
 	}
+
+
+	@Override
+	public List<Integer> getAnalysedFrequentNumbers(int round) {
+		return lottoFrequentMapper.selectByRound(round);
+	}
+	
 }

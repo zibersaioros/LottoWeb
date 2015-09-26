@@ -1,14 +1,22 @@
 package com.rs.lottoweb.service;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,6 +110,7 @@ public class LottoServiceTest {
 	
 	@Test
 	@Rollback
+	@Ignore
 	public void testInsertExclusion(){
 		
 		List<Integer> nums = new ArrayList<Integer>();
@@ -124,6 +133,7 @@ public class LottoServiceTest {
 	
 	
 	@Test
+	@Ignore
 	public void testAnalysisFrequent(){
 		int testCount = 10;
 		int analysisCount = 12;
@@ -170,5 +180,11 @@ public class LottoServiceTest {
 		double hitRate =  count * 1.0 / testCount * 100;
 		System.out.println(sb);
 		System.out.printf("hitRate = %f.2\n", hitRate);
+	}
+	
+	@Test
+	public void testHitCount(){
+		int hitCount = lottoService.getHitCount(Arrays.asList(12, 14, 15, 24, 27, 32), 668);
+		assertThat(hitCount, is(6));
 	}
 }

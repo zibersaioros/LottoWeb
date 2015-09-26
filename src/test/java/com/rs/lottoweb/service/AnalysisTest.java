@@ -164,9 +164,9 @@ public class AnalysisTest {
 	@Test
 	public void testAnalysisFrequent(){
 		int testCount = 20;
-		int analysisCount = 12;
+		int analysisCount = 20;
 		int minRange = 10;
-		int maxRange = 120;
+		int maxRange = 48;
 		int rangeIncrease = 10;
 		int minSeq = 0;
 		int maxSeq = 1; //analysisCount / 2;
@@ -176,13 +176,15 @@ public class AnalysisTest {
 		
 		double standard4 = lottoService.getHitRateDenominator(45, 6, 4);
 		double max4 = lottoService.getHitRateDenominator(43, 4, 4);
+		double standard3 = lottoService.getHitRateDenominator(45, 6, 3);
+		double max3 = lottoService.getHitRateDenominator(42, 3, 3);
 		
-		for(analysisCount = 11 ; analysisCount <= 13; analysisCount++){
-			for(minRange = 36; minRange <= 52; minRange += 4){
-				for(maxRange = 112; maxRange <= 124; maxRange += 4){
-					for(rangeIncrease = 4; rangeIncrease <= 5; rangeIncrease++){
-						for(minSeq = 0; minSeq <= 2;  minSeq++){
-							for(maxSeq = 0; maxSeq <= 6; maxSeq++){
+		for(analysisCount = 12 ; analysisCount <= 12; analysisCount++){
+			for(minRange = 8; minRange <= 8; minRange += 4){
+				for(maxRange = 120; maxRange <= 120; maxRange += 12){
+					for(rangeIncrease = 3; rangeIncrease <= 5; rangeIncrease++){
+						for(minSeq = 0; minSeq <= 1;  minSeq++){
+							for(maxSeq = 0; maxSeq <= 4; maxSeq++){
 								
 								if(maxSeq < minSeq)
 									continue;
@@ -197,6 +199,8 @@ public class AnalysisTest {
 								subBuffer.append("maxSeq = " + maxSeq + "\n");
 								int hit4Count = 0;
 								double forthSum = 0;
+								int hit3Count = 0;
+								double tripleSum = 0;
 								
 								for(int i = 0; i < testCount; i++){
 									int round = lottoService.getCurrentNumber() - i;
@@ -217,21 +221,30 @@ public class AnalysisTest {
 									}
 									subBuffer.append("\n");
 									
-									//4등 확률 계산.
+									//4개 맞을 확률 계산.
 									double forthRate = lottoService.getHitRateDenominator(nums.size(), hitCount, 4);
 									forthRate = (forthRate <= 0) ? max4 : forthRate;
-									
 									if(forthRate < standard4)
 										hit4Count++;
-									
 									forthSum += forthRate;
+									
+									//3개 맞을 확률 계산
+									double tripleRate = lottoService.getHitRateDenominator(nums.size(), hitCount, 3);
+									tripleRate = (tripleRate <= 0) ? max3 : tripleRate;
+									if(tripleRate < standard3)
+										hit3Count++;
+									
+									tripleSum += tripleRate;
 								}
 								
-								subBuffer.append(String.format("hitRate = %f.2\n", hit4Count * 1.0 / testCount * 100));
+								subBuffer.append(String.format("hit4Rate = %f.2\n", hit4Count * 1.0 / testCount * 100));
 								subBuffer.append(String.format("real4Rate = 1/%f.2\n", forthSum / testCount));
-								subBuffer.append(String.format("averageRate = 1/%f.2\n", standard4));
+								subBuffer.append(String.format("average4Rate = 1/%f.2\n", standard4));
+								subBuffer.append(String.format("hit3Rate = %f.2\n", hit3Count * 1.0 / testCount * 100));
+								subBuffer.append(String.format("real3Rate = 1/%f.2\n", tripleSum / testCount));
+								subBuffer.append(String.format("average3Rate = 1/%f.2\n", standard3));
 								subBuffer.append("=====================================\n");
-								if(forthSum / testCount < standard4)
+								if(tripleSum / testCount < standard3 || hit4Count * 1.0 / testCount * 100 >=50)
 									sb.append(subBuffer);
 							}
 						}

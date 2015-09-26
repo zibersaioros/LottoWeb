@@ -79,9 +79,9 @@ public interface LottoService {
 	
 	
 	/**
-	 * 주기적으로 제외수 정보를 인서트
+	 * 주기적으로 분석 정보를 인서트
 	 */
-	public void scheduleExclusion();
+	public void scheduleAnalysis();
 	
 	/**
 	 * 해당 회차의 제외수 리스트를 리턴.
@@ -90,6 +90,12 @@ public interface LottoService {
 	 */
 	public List<Integer> getAnalysedExclusionNumbers(int round);
 	
+	/**
+	 * 해당 회차의 빈번수 리스트를 리턴.
+	 * @param round
+	 * @return
+	 */
+	public List<Integer> getAnalysedFrequentNumbers(int round);
 
 	/**
 	 * 주어진 조건으로 분석하여 해당 회차에 자주 나올 가능성이 있는 수 리턴.

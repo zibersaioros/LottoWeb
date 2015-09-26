@@ -17,3 +17,10 @@ CREATE TABLE LottoExclusion(
 	, num INT NOT NULL
 	, PRIMARY KEY(round, num)
 );
+
+
+CREATE TABLE LottoFrequent(
+	round INT NOT NULL
+	, num INT NOT NULL
+	, PRIMARY KEY(round, num)
+);

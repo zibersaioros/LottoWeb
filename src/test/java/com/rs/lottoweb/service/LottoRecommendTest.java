@@ -3,6 +3,7 @@ package com.rs.lottoweb.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -32,11 +33,11 @@ public class LottoRecommendTest {
 
 	@Test
 	@Ignore
-	public void testGetExclusionNumber(){
+	public void testAnalysis(){
 
-		lottoService.scheduleExclusion();
+		lottoService.scheduleAnalysis();
 
-		List<Integer> nums = lottoService.getAnalysedExclusionNumbers(lottoService.getCurrentNumber()+1);
+		List<Integer> nums = lottoService.getAnalysedFrequentNumbers(lottoService.getCurrentNumber()+1);
 
 		for(int num : nums){
 			System.out.println(num);
@@ -72,12 +73,8 @@ public class LottoRecommendTest {
 	
 	@Test
 	public void test(){
-		List<Integer> list = Arrays.asList(5, 11, 15, 16, 20, 21, 26, 32, 39, 43);
- 		List<Integer> exclusion = Arrays.asList(1, 4, 7, 8, 12, 19, 23, 24, 34, 36, 37, 45);
- 		
-// 		list.removeAll(exclusion);
- 		
-// 		5, 11, 15, 16, 20, 21, 26, 32, 39, 43
+		List<Integer> list = Arrays.asList(1, 2, 3, 4, 5, 7, 8, 9, 11, 12, 13, 14, 16
+				, 17, 18, 19, 20, 21, 24, 25, 27, 28, 29, 30, 34, 37, 38, 40, 43, 44);
  		
 		Random rand = new Random();
 
@@ -92,6 +89,8 @@ public class LottoRecommendTest {
 				
 				numList.add(list.get(index));
 			}
+			
+			Collections.sort(numList);
 
 			for(int num : numList){
 				System.out.print(num + ", ");
