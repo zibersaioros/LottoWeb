@@ -12,7 +12,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class AppConfig {
 	
+	
 
+	//자동설정이라 필요 없음.
 //	@Bean
 //	public DataSource dataSource(){
 //		return new EmbeddedDatabaseBuilder()
@@ -32,6 +34,7 @@ public class AppConfig {
 	}
 
 	
+	//자동 설정이라 필요 없음.
 //	@Bean
 //	public PlatformTransactionManager transactionManager(DataSource dataSource){
 //		return new DataSourceTransactionManager(dataSource);
