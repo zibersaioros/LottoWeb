@@ -21,6 +21,7 @@ import com.google.gson.Gson;
 import com.rs.lottoweb.domain.AnalysisResult;
 import com.rs.lottoweb.domain.LottoAnalysis;
 import com.rs.lottoweb.domain.LottoHistory;
+import com.rs.lottoweb.domain.LottoVariable;
 import com.rs.lottoweb.mapper.LottoExclusionMapper;
 import com.rs.lottoweb.mapper.LottoFrequentMapper;
 import com.rs.lottoweb.mapper.LottoHistoryMapper;
@@ -36,6 +37,7 @@ public class LottoServiceImpl implements LottoService{
 	private Map<String, List<Integer>> seqFrequentCache = new HashMap<String, List<Integer>>();
 	
 	
+	
 	@Autowired
 	LottoHistoryMapper lottoHistoryMapper;
 	
@@ -45,6 +47,9 @@ public class LottoServiceImpl implements LottoService{
 	@Autowired 
 	LottoFrequentMapper lottoFrequentMapper;
 	
+	@Autowired
+	LottoVariableService lottoVariableService;
+	
 	//주기적으로 제외수 분석
 	@Override
 	@Scheduled(cron="0 30 2 */1 * *")
@@ -52,48 +57,60 @@ public class LottoServiceImpl implements LottoService{
 	public void scheduleAnalysis(){
 		clearAllCache();
 		
-		//TODO 환경변수에서 가져와야 함!
-		int analysisCount = 11;
-		int minRange = 12;
-		int maxRange = 160;
-		int rangeIncrease = 2;
-		int minSeq = 0;
-		int maxSeq = 5;
-		
+		//제외수가 없으면
 		int round = getCurrentNumber() + 1;
-		List<AnalysisResult> analList = analysisExclusion(
-				round-1, analysisCount, minRange, maxRange, rangeIncrease, minSeq, maxSeq);
-		List<Integer> exclusionNums = new ArrayList<Integer>();
-		for(AnalysisResult anal : analList){
-			exclusionNums.addAll(getExclusionNumber(round, anal.getRange(), anal.getSequence()));
+		List<Integer> exclusionNums = getAnalysedExclusionNumbers(round);
+		if(exclusionNums == null || exclusionNums.size() < 1){
+			//TODO 환경변수에서 가져와야 함!
+			int analysisCount = lottoVariableService.selectByName(LottoVariable.EX_ANAL_COUNT, 11);
+			int minRange = lottoVariableService.selectByName(LottoVariable.EX_MIN_RANGE, 12);
+			int maxRange = lottoVariableService.selectByName(LottoVariable.EX_MAX_RANGE, 160);
+			int rangeIncrease = lottoVariableService.selectByName(LottoVariable.EX_RANGE_INC, 2);
+			int minSeq = lottoVariableService.selectByName(LottoVariable.EX_MIN_SEQUENCE, 0);
+			int maxSeq = lottoVariableService.selectByName(LottoVariable.EX_MAX_SEQUENCE, 5);
+			
+			List<AnalysisResult> analList = analysisExclusion(
+					round-1, analysisCount, minRange, maxRange, rangeIncrease, minSeq, maxSeq);
+			exclusionNums = new ArrayList<Integer>();
+			for(AnalysisResult anal : analList){
+				exclusionNums.addAll(getExclusionNumber(round, anal.getRange(), anal.getSequence()));
+			}
+			
+			exclusionNums = removeDuplicate(exclusionNums);
+			
+			//nums를 돌아가면서 insert  db 커넥션을 줄이기 위해 한번에 삽입
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("round", round);
+			params.put("list", exclusionNums);
+			lottoExclusionMapper.insert(params);
 		}
 		
-		exclusionNums = removeDuplicate(exclusionNums);
 		
-		//nums를 돌아가면서 insert  db 커넥션을 줄이기 위해 한번에 삽입
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("round", round);
-		params.put("list", exclusionNums);
-		lottoExclusionMapper.insert(params);
-		
-		//TODO 환경변수에서 가져와야 함!! 추천수를 가져온다.
-		analysisCount = 12;
-		minRange = 8;
-		maxRange = 120;
-		rangeIncrease = 5;
-		minSeq = 0;
-		maxSeq = 3; //analysisCount / 2;
+		List<Integer> frequentNums = getAnalysedFrequentNumbers(round);
+		if(frequentNums == null || frequentNums.size() < 1){
+			//TODO 환경변수에서 가져와야 함!! 추천수를 가져온다.
+			int analysisCount = 12;
+			int minRange = 8;
+			int maxRange = 120;
+			int rangeIncrease = 5;
+			int minSeq = 0;
+			int maxSeq = 3; //analysisCount / 2;
 
-		List<AnalysisResult> frequentList = analysisFrequent(round-1, analysisCount, minRange, maxRange, rangeIncrease, minSeq, maxSeq);
-		List<Integer> frequentNums = new ArrayList<Integer>();
-		for(AnalysisResult anal : frequentList){
-			frequentNums.addAll(getFrequentNumber(round, anal.getRange(), anal.getSequence()));
+			List<AnalysisResult> frequentList = analysisFrequent(round-1, analysisCount, minRange, maxRange, rangeIncrease, minSeq, maxSeq);
+			frequentNums = new ArrayList<Integer>();
+			for(AnalysisResult anal : frequentList){
+				frequentNums.addAll(getFrequentNumber(round, anal.getRange(), anal.getSequence()));
+			}
+			frequentNums = removeDuplicate(frequentNums);
+			frequentNums.removeAll(exclusionNums);
+			
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("round", round);
+			params.put("list", frequentNums);
+			lottoFrequentMapper.insert(params);
 		}
-		frequentNums = removeDuplicate(frequentNums);
-		frequentNums.removeAll(exclusionNums);
 		
-		params.put("list", frequentNums);
-		lottoFrequentMapper.insert(params);
+		
 	}
 	
 	
@@ -433,5 +450,6 @@ public class LottoServiceImpl implements LottoService{
 	public List<Integer> getAnalysedFrequentNumbers(int round) {
 		return lottoFrequentMapper.selectByRound(round);
 	}
+	
 	
 }

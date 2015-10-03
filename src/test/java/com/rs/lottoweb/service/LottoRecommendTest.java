@@ -32,16 +32,35 @@ public class LottoRecommendTest {
 
 
 	@Test
-	@Ignore
 	public void testAnalysis(){
 
 		lottoService.scheduleAnalysis();
 
 		List<Integer> nums = lottoService.getAnalysedFrequentNumbers(lottoService.getCurrentNumber()+1);
+		
+		
+		Random rand = new Random(System.currentTimeMillis());
 
-		for(int num : nums){
-			System.out.println(num);
+		for(int j = 0; j < 10; j++){
+			List<Integer> numList = new ArrayList<Integer>();
+			for(int i = 0; i < 6; i++){
+				int index = rand.nextInt(nums.size());
+				if(numList.contains(nums.get(index))){
+					i--;
+					continue;
+				}
+				
+				numList.add(nums.get(index));
+			}
+			
+			Collections.sort(numList);
+
+			for(int num : numList){
+				System.out.print(num + ", ");
+			}
+			System.out.println();
 		}
+		
 	}	
 
 
@@ -72,6 +91,7 @@ public class LottoRecommendTest {
 	
 	
 	@Test
+	@Ignore
 	public void test(){
 		List<Integer> list = Arrays.asList(1, 2, 3, 4, 5, 7, 8, 9, 11, 12, 13, 14, 16
 				, 17, 18, 19, 20, 21, 24, 25, 27, 28, 29, 30, 34, 37, 38, 40, 43, 44);

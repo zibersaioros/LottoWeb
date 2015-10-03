@@ -1,6 +1,6 @@
 package com.rs.lottoweb.domain;
 
-public interface Variable {
+public class LottoVariable {
 
 	public static final String EX_ANAL_COUNT = "exclusionAnalysisCount";
 	public static final String EX_MIN_RANGE = "exclusionMinRange";
@@ -15,4 +15,23 @@ public interface Variable {
 	public static final String FR_RANGE_INC = "frequentRangeIncrease";
 	public static final String FR_MIN_SEQUENCE = "frequentMinSequence";
 	public static final String FR_MAX_SEQUENCE = "frequentMaxSequence";
+	
+	private String name;
+	private String value;
+	
+	
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getValue() {
+		return value;
+	}
+	public void setValue(String value) {
+		this.value = value;
+	}
+	
+	
 }
