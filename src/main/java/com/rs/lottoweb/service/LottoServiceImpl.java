@@ -89,12 +89,12 @@ public class LottoServiceImpl implements LottoService{
 		List<Integer> frequentNums = getAnalysedFrequentNumbers(round);
 		if(frequentNums == null || frequentNums.size() < 1){
 			//TODO 환경변수에서 가져와야 함!! 추천수를 가져온다.
-			int analysisCount = 12;
-			int minRange = 8;
-			int maxRange = 120;
-			int rangeIncrease = 5;
-			int minSeq = 0;
-			int maxSeq = 3; //analysisCount / 2;
+			int analysisCount = lottoVariableService.selectByName(LottoVariable.FR_ANAL_COUNT, 12);
+			int minRange = lottoVariableService.selectByName(LottoVariable.FR_MIN_RANGE, 8);
+			int maxRange = lottoVariableService.selectByName(LottoVariable.FR_MAX_RANGE, 120);
+			int rangeIncrease = lottoVariableService.selectByName(LottoVariable.FR_RANGE_INC, 5);
+			int minSeq = lottoVariableService.selectByName(LottoVariable.FR_MIN_SEQUENCE, 0);
+			int maxSeq = lottoVariableService.selectByName(LottoVariable.FR_MAX_SEQUENCE, 3);
 
 			List<AnalysisResult> frequentList = analysisFrequent(round-1, analysisCount, minRange, maxRange, rangeIncrease, minSeq, maxSeq);
 			frequentNums = new ArrayList<Integer>();

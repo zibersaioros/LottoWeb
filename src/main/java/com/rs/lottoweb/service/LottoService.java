@@ -152,4 +152,6 @@ public interface LottoService {
 	 * 모든 분석 캐시 삭제
 	 */
 	public void clearAllCache();
+	
+	
 }
