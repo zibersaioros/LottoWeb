@@ -62,12 +62,12 @@ public class LottoServiceImpl implements LottoService{
 		List<Integer> exclusionNums = getAnalysedExclusionNumbers(round);
 		if(exclusionNums == null || exclusionNums.size() < 1){
 			//TODO 환경변수에서 가져와야 함!
-			int analysisCount = lottoVariableService.selectByName(LottoVariable.EX_ANAL_COUNT, 11);
-			int minRange = lottoVariableService.selectByName(LottoVariable.EX_MIN_RANGE, 12);
-			int maxRange = lottoVariableService.selectByName(LottoVariable.EX_MAX_RANGE, 160);
-			int rangeIncrease = lottoVariableService.selectByName(LottoVariable.EX_RANGE_INC, 2);
-			int minSeq = lottoVariableService.selectByName(LottoVariable.EX_MIN_SEQUENCE, 0);
-			int maxSeq = lottoVariableService.selectByName(LottoVariable.EX_MAX_SEQUENCE, 5);
+			int analysisCount = lottoVariableService.selectByName(LottoVariable.EX_ANAL_COUNT, LottoVariable.EX_ANAL_COUNT_VAL);
+			int minRange = lottoVariableService.selectByName(LottoVariable.EX_MIN_RANGE, LottoVariable.EX_MIN_RANGE_VAL);
+			int maxRange = lottoVariableService.selectByName(LottoVariable.EX_MAX_RANGE, LottoVariable.EX_MAX_RANGE_VAL);
+			int rangeIncrease = lottoVariableService.selectByName(LottoVariable.EX_RANGE_INC, LottoVariable.EX_RANGE_INC_VAL);
+			int minSeq = lottoVariableService.selectByName(LottoVariable.EX_MIN_SEQUENCE, LottoVariable.EX_MIN_SEQUENCE_VAL);
+			int maxSeq = lottoVariableService.selectByName(LottoVariable.EX_MAX_SEQUENCE, LottoVariable.EX_MAX_SEQUENCE_VAL);
 			
 			List<AnalysisResult> analList = analysisExclusion(
 					round-1, analysisCount, minRange, maxRange, rangeIncrease, minSeq, maxSeq);
@@ -89,12 +89,12 @@ public class LottoServiceImpl implements LottoService{
 		List<Integer> frequentNums = getAnalysedFrequentNumbers(round);
 		if(frequentNums == null || frequentNums.size() < 1){
 			//TODO 환경변수에서 가져와야 함!! 추천수를 가져온다.
-			int analysisCount = lottoVariableService.selectByName(LottoVariable.FR_ANAL_COUNT, 12);
-			int minRange = lottoVariableService.selectByName(LottoVariable.FR_MIN_RANGE, 8);
-			int maxRange = lottoVariableService.selectByName(LottoVariable.FR_MAX_RANGE, 120);
-			int rangeIncrease = lottoVariableService.selectByName(LottoVariable.FR_RANGE_INC, 5);
-			int minSeq = lottoVariableService.selectByName(LottoVariable.FR_MIN_SEQUENCE, 0);
-			int maxSeq = lottoVariableService.selectByName(LottoVariable.FR_MAX_SEQUENCE, 3);
+			int analysisCount = lottoVariableService.selectByName(LottoVariable.FR_ANAL_COUNT, LottoVariable.FR_ANAL_COUNT_VAL);
+			int minRange = lottoVariableService.selectByName(LottoVariable.FR_MIN_RANGE, LottoVariable.FR_MIN_RANGE_VAL);
+			int maxRange = lottoVariableService.selectByName(LottoVariable.FR_MAX_RANGE, LottoVariable.FR_MAX_RANGE_VAL);
+			int rangeIncrease = lottoVariableService.selectByName(LottoVariable.FR_RANGE_INC, LottoVariable.FR_RANGE_INC_VAL);
+			int minSeq = lottoVariableService.selectByName(LottoVariable.FR_MIN_SEQUENCE, LottoVariable.FR_MIN_SEQUENCE_VAL);
+			int maxSeq = lottoVariableService.selectByName(LottoVariable.FR_MAX_SEQUENCE, LottoVariable.FR_MAX_SEQUENCE_VAL);
 
 			List<AnalysisResult> frequentList = analysisFrequent(round-1, analysisCount, minRange, maxRange, rangeIncrease, minSeq, maxSeq);
 			frequentNums = new ArrayList<Integer>();

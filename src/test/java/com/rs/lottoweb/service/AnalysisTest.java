@@ -18,12 +18,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.rs.lottoweb.LottoBootApplication;
 import com.rs.lottoweb.domain.AnalysisResult;
 import com.rs.lottoweb.domain.LottoHistory;
+import com.rs.lottoweb.domain.LottoVariable;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes={LottoBootApplication.class})
 public class AnalysisTest {
-
+	public static final int MODE_CONFIRM = 1;
+	public static final int MODE_ANALYSIS = 2;
 
 	@Autowired
 	LottoService lottoService;
@@ -57,63 +59,75 @@ public class AnalysisTest {
 		List<Integer> count6List = new ArrayList<Integer>();
 
 		int[] range1 = {9, 18};
-		int[] range2 = {8, 30};
+		int[] range2 = {8, 60};
 		int[] range3 = {120, 180};
 		int[] range4 = {2, 21};
 		int[] range5 = {0, range1[1]};
 		int[] range6 = {0, range1[1]};
+		
+//		int[] range1 = {LottoVariable.EX_ANAL_COUNT_VAL, LottoVariable.EX_ANAL_COUNT_VAL};
+//		int[] range2 = {LottoVariable.EX_MIN_RANGE_VAL, LottoVariable.EX_MIN_RANGE_VAL};
+//		int[] range3 = {LottoVariable.EX_MAX_RANGE_VAL, LottoVariable.EX_MAX_RANGE_VAL};
+//		int[] range4 = {LottoVariable.EX_RANGE_INC_VAL, LottoVariable.EX_RANGE_INC_VAL};
+//		int[] range5 = {LottoVariable.EX_MIN_SEQUENCE_VAL, LottoVariable.EX_MIN_SEQUENCE_VAL};
+//		int[] range6 = {LottoVariable.EX_MAX_SEQUENCE_VAL, LottoVariable.EX_MAX_SEQUENCE_VAL};
+		
+		int successCount = 0;
+		int executionCount = 0;
 		int loopCount = 0;
-		for(int count1 = 0; count1 < 2; count1++, loopCount++){
+		for(int count1 = 0 ; count1 < 6 && loopCount < 10 && successCount < 10; count1++){
 
 			analysisCount = getAnalysisRandNum(range1);
 			if(count1List.contains(analysisCount)){
 				count1--;
+				loopCount++;
 				continue;
 			}
 
 			count1List.add(analysisCount);
-			loopCount = 0;
-			for(int count2 = 0; count2 < 3 && loopCount < 20; count2++, loopCount++){
+			for(int count2 = 0; count2 < 6 && loopCount < 10 && successCount < 10; count2++){
 				minRange = getAnalysisRandNum(range2);
 				if(count2List.contains(minRange)){
+					loopCount++;
 					count2--; 
 					continue;
 				}
 				count2List.add(minRange);
-				loopCount = 0;
-				for(int count3 = 0; count3 < 3 && loopCount < 20; count3++, loopCount++){
+				
+				for(int count3 = 0; count3 < 6 && loopCount < 10 && successCount < 10; count3++){
 					maxRange = getAnalysisRandNum(range3);
 					if(count3List.contains(maxRange) || maxRange <= minRange){
 						count3--; 
+						loopCount++;
 						continue;
 					}
 					count3List.add(maxRange);
-
-					loopCount = 0;
-					for(int count4 = 0; count4 < 3 && loopCount < 20; count4++, loopCount++){
+					for(int count4 = 0; count4 < 6 && loopCount < 10 && successCount < 10; count4++){
 						rangeIncrease = getAnalysisRandNum(range4);
 						if(count4List.contains(rangeIncrease)){
+							loopCount++;
 							count4--; 
 							continue;
 						}
 						count4List.add(rangeIncrease);
 
-						loopCount = 0;
-						for(int count5 = 0; count5 < 3 && loopCount < 20; count5++, loopCount++){
-							minSeq = getAnalysisRandNum(range5);
+						for(int count5 = 0; count5 < 6 && loopCount < 20 && successCount < 10; count5++){
+							minSeq = getAnalysisRandNum(range5, analysisCount);
 							if(count5List.contains(minSeq)){
+								loopCount++;
 								count5--;
 								continue;
 							}
 							count5List.add(minSeq);
-
-							loopCount = 0;
-							for(int count6 = 0; count6 < 2 && loopCount < 20; count6++, loopCount++){
-								maxSeq = getAnalysisRandNum(range6);
+							for(int count6 = 0; count6 < 6 && loopCount < 20 && successCount < 10; count6++) {
+								maxSeq = getAnalysisRandNum(range6, analysisCount);
 								if(count6List.contains(maxSeq) || maxSeq < minSeq){
+									loopCount++;
 									count6--;
 									continue;
 								}
+								executionCount++;
+								
 								count6List.add(maxSeq);
 								
 								int count = 0;	
@@ -170,14 +184,20 @@ public class AnalysisTest {
 								subBuffer.append(String.format("realHitRate = %f.2\n", realHitRate));
 								subBuffer.append(String.format("averageRate = %f.2\n", averageRate));
 								subBuffer.append("=====================================\n");
-								if(realHitRate > averageRate * 2)
+								if(realHitRate > averageRate * 3 || hitRate >= 40 || (realHitRate > averageRate * 2 && realHitRate >= 30)){
 									sb.append(subBuffer);
-
+									successCount++;
+								}
 							}
+							loopCount = 0;
 						}
+						loopCount = 0;
 					}
+					loopCount = 0;
 				}
+				loopCount = 0;
 			}
+			loopCount = 0;
 		}
 		
 
@@ -248,10 +268,11 @@ public class AnalysisTest {
 //				}
 //			}
 //		}
-
 		System.out.println(sb.toString());
+		System.out.println("execute : " +  executionCount);
+		System.out.println("loop : " + loopCount);
 		try {
-			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("target", "analysisResult.txt")));
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("data", "analysisResult.txt")));
 			bw.write(sb.toString());
 			bw.flush();
 			bw.close();
@@ -331,7 +352,7 @@ public class AnalysisTest {
 		int[] range6 = {0, range1[1]};
 		int loopCount = 0;
 		
-		for(int count1 = 0; count1 < 2; count1++, loopCount++){
+		for(int count1 = 0; count1 < 2 && loopCount < 5; count1++, loopCount++){
 
 			analysisCount = getAnalysisRandNum(range1);
 			if(count1List.contains(analysisCount)){
@@ -340,16 +361,14 @@ public class AnalysisTest {
 			}
 
 			count1List.add(analysisCount);
-			loopCount = 0;
-			for(int count2 = 0; count2 < 3 && loopCount < 20; count2++, loopCount++){
+			for(int count2 = 0; count2 < 3 && loopCount < 5; count2++, loopCount++){
 				minRange = getAnalysisRandNum(range2);
 				if(count2List.contains(minRange)){
 					count2--; 
 					continue;
 				}
 				count2List.add(minRange);
-				loopCount = 0;
-				for(int count3 = 0; count3 < 3 && loopCount < 20; count3++, loopCount++){
+				for(int count3 = 0; count3 < 3 && loopCount < 5; count3++, loopCount++){
 					maxRange = getAnalysisRandNum(range3);
 					if(count3List.contains(maxRange) || maxRange <= minRange){
 						count3--; 
@@ -357,8 +376,7 @@ public class AnalysisTest {
 					}
 					count3List.add(maxRange);
 
-					loopCount = 0;
-					for(int count4 = 0; count4 < 3 && loopCount < 20; count4++, loopCount++){
+					for(int count4 = 0; count4 < 3 && loopCount < 5; count4++, loopCount++){
 						rangeIncrease = getAnalysisRandNum(range4);
 						if(count4List.contains(rangeIncrease)){
 							count4--; 
@@ -366,8 +384,7 @@ public class AnalysisTest {
 						}
 						count4List.add(rangeIncrease);
 
-						loopCount = 0;
-						for(int count5 = 0; count5 < 3 && loopCount < 20; count5++, loopCount++){
+						for(int count5 = 0; count5 < 3 && loopCount < 5; count5++, loopCount++){
 							minSeq = getAnalysisRandNum(range5);
 							if(count5List.contains(minSeq)){
 								count5--;
@@ -375,8 +392,7 @@ public class AnalysisTest {
 							}
 							count5List.add(minSeq);
 
-							loopCount = 0;
-							for(int count6 = 0; count6 < 2 && loopCount < 20; count6++, loopCount++){
+							for(int count6 = 0; count6 < 2 && loopCount < 5; count6++, loopCount++){
 								maxSeq = getAnalysisRandNum(range6);
 								if(count6List.contains(maxSeq) || maxSeq < minSeq){
 									count6--;
@@ -442,10 +458,15 @@ public class AnalysisTest {
 								if(tripleSum / testCount < standard3 || hit4Count * 1.0 / testCount * 100 >=50)
 									sb.append(subBuffer);
 							}
+							loopCount = 0;
 						}
+						loopCount = 0;
 					}
+					loopCount = 0;
 				}
+				loopCount = 0;
 			}
+			loopCount = 0;
 		}
 		
 //		for(analysisCount = 12 ; analysisCount <= 12; analysisCount++){
@@ -524,15 +545,20 @@ public class AnalysisTest {
 
 		System.out.println(sb.toString());
 		try {
-			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("target", "analysisFrequentResult.txt")));
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("data", "analysisFrequentResult.txt")));
 			bw.write(sb.toString());
 			bw.flush();
 			bw.close();
 		} catch (Exception e) {}
 	}
 
-
 	private int getAnalysisRandNum(int[] range){
-		return random.nextInt(range[1] - range[0] + 1) + range[0];
+		return getAnalysisRandNum(range, range[1]);
+	}
+
+	private int getAnalysisRandNum(int[] range, int limit){
+		int max = Math.min(limit, range[1]);
+		int min = range[0];
+		return random.nextInt(max - min + 1) + min;
 	}
 }

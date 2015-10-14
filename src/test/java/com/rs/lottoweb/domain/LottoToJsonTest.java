@@ -39,8 +39,8 @@ public class LottoToJsonTest {
 	public void setUp() throws Exception{
 		lottoResource = new ClassPathResource("lotto.json");
 		gson = new Gson();
-		jsonLocation = new File("target", "lotto.json");
-		sqlLocation = new File("target", "data.sql");
+		jsonLocation = new File("data", "lotto.json");
+		sqlLocation = new File("data", "data.sql");
 	}
 
 
