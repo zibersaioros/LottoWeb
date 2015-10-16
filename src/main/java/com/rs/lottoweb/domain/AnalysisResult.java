@@ -1,21 +1,21 @@
 package com.rs.lottoweb.domain;
 
-public class ExclusionAnalysis {
+public class AnalysisResult {
 
-	private int limit;
+	private int range;
 	private int sequence;
 	
-	public ExclusionAnalysis(int limit, int sequence){
-		this.limit = limit;
+	public AnalysisResult(int range, int sequence){
+		this.range = range;
 		this.sequence = sequence;
 	}
 	
 	
-	public int getLimit() {
-		return limit;
+	public int getRange() {
+		return range;
 	}
-	public void setLimit(int limit) {
-		this.limit = limit;
+	public void setRange(int range) {
+		this.range = range;
 	}
 	public int getSequence() {
 		return sequence;

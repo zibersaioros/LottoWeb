@@ -37,18 +37,18 @@
         )
     </insert>
     
-    <select id="selectExclusion" parameterType="Map" resultType="com.rs.lottoweb.domain.LottoAnalysis">
+    <select id="selectExclusionPair" parameterType="Map" resultType="com.rs.lottoweb.domain.LottoAnalysis">
         WITH recursive rounds(round) as (
-        		VALUES(${round})
+        		VALUES(${start})
         	UNION
-        		SELECT round -1 FROM rounds WHERE round > #{round} - #{limit} + 1
+        		SELECT round -1 FROM rounds WHERE round > #{start} - #{analRange}
         )
       	SELECT
 			A.round - B.round AS diff
 			, count(*) as cnt
         FROM
         	rounds A
-        	LEFT JOIN LottoHistory B ON A.round > B.round
+        	JOIN LottoHistory B ON A.round > B.round
         		AND B.${column} NOT IN (
 	        		UNNEST(
 		        		(
@@ -111,5 +111,55 @@
         WHERE
         	round = #{round}
     </select>
+    
+    <select id="selectAllRound" resultType="com.rs.lottoweb.domain.LottoHistory">
+    	SELECT
+    		round
+    	FROM
+    		LottoHistory
+    	ORDER BY
+    		round ASC
+    </select>
+    
+    
+    <select id="getLottoCount" resultType="Integer">
+    	SELECT
+    		COUNT(*)
+    	FROM
+    		LottoHistory
+    </select>
+    
+    
+    <select id="selectFrequentPair" resultType="com.rs.lottoweb.domain.LottoAnalysis">
+        WITH recursive rounds(round) as (
+        		VALUES(${start})
+        	UNION
+        		SELECT round -1 FROM rounds WHERE round > #{start} - #{analRange}
+        )
+      	SELECT
+			A.round - B.round AS diff
+			, count(*) as cnt
+        FROM
+        	rounds A
+        	JOIN LottoHistory B ON A.round > B.round
+        		AND B.${column} IN (
+	        		UNNEST(
+		        		(
+			        		SELECT
+			        			nums
+			        		FROM
+			        			LottoHistory
+			        		WHERE
+			        			round = A.round
+		        		)
+	        		)
+	        	)
+		GROUP BY
+			A.round - B.round
+		ORDER BY
+			cnt DESC
+			, diff ASC
+    </select>
+    
 </mapper>
   

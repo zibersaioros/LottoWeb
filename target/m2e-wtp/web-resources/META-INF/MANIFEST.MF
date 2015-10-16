@@ -1,5 +1,9 @@
 Manifest-Version: 1.0
-Build-Jdk: 1.7.0_71
-Built-By: RS
+Implementation-Title: LottoWebMaven
+Implementation-Version: 0.0.1-SNAPSHOT
+Built-By: SIL-USER
+Implementation-Vendor-Id: com.rs.lottoweb
+Build-Jdk: 1.8.0_60
 Created-By: Maven Integration for Eclipse
+Implementation-Vendor: Pivotal Software, Inc.
 

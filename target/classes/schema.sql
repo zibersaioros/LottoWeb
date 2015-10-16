@@ -11,3 +11,22 @@ CREATE TABLE LottoHistory(
 	, num7 INT NOT NULL
 	, nums INT ARRAY[6]
 );
+
+CREATE TABLE LottoExclusion(
+	round INT NOT NULL
+	, num INT NOT NULL
+	, PRIMARY KEY(round, num)
+);
+
+
+CREATE TABLE LottoFrequent(
+	round INT NOT NULL
+	, num INT NOT NULL
+	, PRIMARY KEY(round, num)
+);
+
+CREATE TABLE LottoVariable(
+	name varchar(30) NOT NULL
+	, value varchar(30) NOT NULL
+	, PRIMARY KEY(name)
+);

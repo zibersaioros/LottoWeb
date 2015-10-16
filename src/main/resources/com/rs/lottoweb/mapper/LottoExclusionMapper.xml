@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rs.lottoweb.mapper.LottoExclusionMapper">
+    <insert id="insert" >
+    	
+    	INSERT INTO LottoExclusion (
+        	round
+        	, num
+        ) VALUES
+        <foreach collection="list" open="(" close=")" separator="),(" item="item">
+            #{round}
+            , #{item} 
+        </foreach>
+    </insert>
+    
+    <select id="selectByRound" resultType="Integer">
+    	SELECT
+    		num
+    	FROM
+    		LottoExclusion
+    	WHERE
+    		round = #{round}
+    </select>
+</mapper>
+  
