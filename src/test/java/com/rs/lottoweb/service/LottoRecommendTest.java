@@ -41,7 +41,7 @@ public class LottoRecommendTest {
 		
 		Random rand = new Random(System.currentTimeMillis());
 
-		for(int j = 0; j < 10; j++){
+		for(int j = 0; j < 20; j++){
 			List<Integer> numList = new ArrayList<Integer>();
 			for(int i = 0; i < 6; i++){
 				int index = rand.nextInt(nums.size());
