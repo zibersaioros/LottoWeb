@@ -78,6 +78,10 @@ public class LottoServiceImpl implements LottoService{
 			
 			exclusionNums = removeDuplicate(exclusionNums);
 			
+			if(exclusionNums.size() >= 39){
+				//TODO 메일 리포팅
+			}
+			
 			//nums를 돌아가면서 insert  db 커넥션을 줄이기 위해 한번에 삽입
 			Map<String, Object> params = new HashMap<String, Object>();
 			params.put("round", round);
@@ -103,6 +107,10 @@ public class LottoServiceImpl implements LottoService{
 			}
 			frequentNums = removeDuplicate(frequentNums);
 			frequentNums.removeAll(exclusionNums);
+			
+			if(frequentNums.size() < 6){
+				//TODO 메일 리포팅
+			}
 			
 			Map<String, Object> params = new HashMap<String, Object>();
 			params.put("round", round);

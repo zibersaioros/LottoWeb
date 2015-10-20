@@ -48,6 +48,7 @@ public class AnalysisTest {
 	}
 
 	@Test
+	@Ignore
 	public void testAnalysisExclusion(){
 		int testCount = 20;
 
@@ -92,25 +93,24 @@ public class AnalysisTest {
 
 
 	@Test
-	@Ignore
 	public void testAnalysisFrequent(){
 		int testCount = 20;
 
 		lottoService.clearAllCache();
 
-//		int[] analysisCountArr = {9, 18};
-//		int[] minRangeArr = {8, 60};
-//		int[] maxRangeArr = {80, 180};
-//		int[] rangeIncreaseArr = {2, 21};
-//		int[] minSeqArr = {0, analysisCountArr[1]};
-//		int[] maxSeqArr = {0, analysisCountArr[1]};
+		int[] analysisCountArr = {9, 18};
+		int[] minRangeArr = {8, 60};
+		int[] maxRangeArr = {80, 180};
+		int[] rangeIncreaseArr = {2, 21};
+		int[] minSeqArr = {0, analysisCountArr[1]};
+		int[] maxSeqArr = {0, analysisCountArr[1]};
 		
-		int[] analysisCountArr = {LottoVariable.FR_ANAL_COUNT_VAL, LottoVariable.FR_ANAL_COUNT_VAL};
-		int[] minRangeArr = {LottoVariable.FR_MIN_RANGE_VAL, LottoVariable.FR_MIN_RANGE_VAL};
-		int[] maxRangeArr = {LottoVariable.FR_MAX_RANGE_VAL, LottoVariable.FR_MAX_RANGE_VAL};
-		int[] rangeIncreaseArr = {LottoVariable.FR_RANGE_INC_VAL, LottoVariable.FR_RANGE_INC_VAL};
-		int[] minSeqArr = {LottoVariable.FR_MIN_SEQUENCE_VAL, LottoVariable.FR_MIN_SEQUENCE_VAL};
-		int[] maxSeqArr = {LottoVariable.FR_MAX_SEQUENCE_VAL, LottoVariable.FR_MAX_SEQUENCE_VAL};
+//		int[] analysisCountArr = {LottoVariable.FR_ANAL_COUNT_VAL, LottoVariable.FR_ANAL_COUNT_VAL};
+//		int[] minRangeArr = {LottoVariable.FR_MIN_RANGE_VAL, LottoVariable.FR_MIN_RANGE_VAL};
+//		int[] maxRangeArr = {LottoVariable.FR_MAX_RANGE_VAL, LottoVariable.FR_MAX_RANGE_VAL};
+//		int[] rangeIncreaseArr = {LottoVariable.FR_RANGE_INC_VAL, LottoVariable.FR_RANGE_INC_VAL};
+//		int[] minSeqArr = {LottoVariable.FR_MIN_SEQUENCE_VAL, LottoVariable.FR_MIN_SEQUENCE_VAL};
+//		int[] maxSeqArr = {LottoVariable.FR_MAX_SEQUENCE_VAL, LottoVariable.FR_MAX_SEQUENCE_VAL};
 		
 		int[][] varArr = {analysisCountArr, minRangeArr, maxRangeArr, rangeIncreaseArr, minSeqArr, maxSeqArr};
 		int[] loopCount = {7, 7, 7, 7, 7, 4};
@@ -176,6 +176,7 @@ public class AnalysisTest {
 					acb.append(result);
 			}
 		}
+		duplicateList.get(depth).clear();
 	}
 	
 	private String executeAnalysisExclusion(int testCount, int[] analysisVars){
@@ -192,6 +193,7 @@ public class AnalysisTest {
 		subBuffer.append("minSeq = " + analysisVars[4] + "\n");
 		subBuffer.append("maxSeq = " + analysisVars[5] + "\n");
 
+		int testedCount = 0;
 		for(int i = 0; i < testCount; i++){
 			int round = lottoService.getCurrentNumber() - i;
 			List<AnalysisResult> analList = lottoService.analysisExclusion(round-1, analysisVars[0], analysisVars[1], analysisVars[2], analysisVars[3], analysisVars[4], analysisVars[5]);
@@ -204,6 +206,10 @@ public class AnalysisTest {
 			LottoHistory history = lottoService.selectByRound(round);
 			
 			subBuffer.append("round : " + round + " count : " + nums.size());
+			if(nums.size() >= 39)
+				continue;
+			testedCount++;
+			
 			numsCount += nums.size();
 
 			if(nums.contains(history.getNum1_ord())
@@ -222,13 +228,12 @@ public class AnalysisTest {
 		}
 		
 
-		if(Math.ceil(numsCount / testCount) > 38)
+		if(Math.ceil(numsCount / testedCount) > 38)
 			return null;
 
-		double hitRate =  count*1.0 / testCount * 100;
+		double hitRate =  count*1.0 / testedCount * 100;
 		double realHitRate = hitCount / numsCount * 100;
-
-		double averageRate = lottoService.getExclusionRate((int)Math.ceil(numsCount / testCount))*100;
+		double averageRate = lottoService.getExclusionRate((int)Math.ceil(numsCount / testedCount))*100;
 		subBuffer.append(String.format("hitRate = %f.2\n", hitRate));
 		subBuffer.append(String.format("realHitRate = %f.2\n", realHitRate));
 		subBuffer.append(String.format("averageRate = %f.2\n", averageRate));
@@ -236,7 +241,7 @@ public class AnalysisTest {
 		
 //		System.out.println(subBuffer.toString());
 		
-		if(realHitRate > averageRate * 3 || hitRate >= 40 || (realHitRate > averageRate * 2 && hitRate >= 30))
+		if(realHitRate >= averageRate * 3 && averageRate >= 7 || hitRate >= 40 || (realHitRate > averageRate * 2 && hitRate >= 30))
 			return subBuffer.toString();
 		else 
 			return null;
@@ -257,6 +262,7 @@ public class AnalysisTest {
 		int hit3Count = 0;
 		double tripleSum = 0;
 
+		int testedCount = 0;
 		for(int i = 0; i < testCount; i++){
 			int round = lottoService.getCurrentNumber() - i;
 			List<AnalysisResult> analList = lottoService.analysisFrequent(round-1, analysisCount, minRange, maxRange, rangeIncrease, minSeq, maxSeq);
@@ -266,11 +272,14 @@ public class AnalysisTest {
 			}
 
 			nums = lottoService.removeDuplicate(nums);
-
+			
 			//각각 확률 계산.
 			int hitCount = lottoService.getHitCount(nums, round) ;
 			subBuffer.append("round : " + round + " count : " + nums.size());
 			subBuffer.append(" hit : " + hitCount +"\n");
+			if(nums.size() >= 45)
+				continue;
+			testedCount++;
 			for(int expect = 6 ; expect > 3; expect--){
 				subBuffer.append(expect + " : " + lottoService.getHitRateString(nums.size(), hitCount, expect) + "\n");
 			}
@@ -292,14 +301,14 @@ public class AnalysisTest {
 			tripleSum += tripleRate;
 		}
 
-		subBuffer.append(String.format("hit4Rate = %f.2\n", hit4Count * 1.0 / testCount * 100));
-		subBuffer.append(String.format("real4Rate = 1/%f.2\n", forthSum / testCount));
+		subBuffer.append(String.format("hit4Rate = %f.2\n", hit4Count * 1.0 / testedCount * 100));
+		subBuffer.append(String.format("real4Rate = 1/%f.2\n", forthSum / testedCount));
 		subBuffer.append(String.format("average4Rate = 1/%f.2\n", standard4));
-		subBuffer.append(String.format("hit3Rate = %f.2\n", hit3Count * 1.0 / testCount * 100));
-		subBuffer.append(String.format("real3Rate = 1/%f.2\n", tripleSum / testCount));
+		subBuffer.append(String.format("hit3Rate = %f.2\n", hit3Count * 1.0 / testedCount * 100));
+		subBuffer.append(String.format("real3Rate = 1/%f.2\n", tripleSum / testedCount));
 		subBuffer.append(String.format("average3Rate = 1/%f.2\n", standard3));
 		subBuffer.append("=====================================\n");
-		if(tripleSum / testCount < standard3 || hit4Count * 1.0 / testCount * 100 >=50)
+		if(tripleSum / testedCount < standard3 || hit4Count * 1.0 / testedCount * 100 >= 70)
 			return subBuffer.toString();
 		else
 			return null;

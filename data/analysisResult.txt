@@ -1,31 +1,248 @@
 testCount = 20
-analysisCount = 10
-minRange = 49
-maxRange = 157
-rangeIncrease = 13
+analysisCount = 11
+minRange = 57
+maxRange = 172
+rangeIncrease = 21
+minSeq = 6
+maxSeq = 11
+round : 672 count : 11
+round : 671 count : 11
+round : 670 count : 10
+round : 669 count : 7
+round : 668 count : 10 false
+round : 667 count : 9
+round : 666 count : 11 false
+round : 665 count : 19 false
+round : 664 count : 12 false
+round : 663 count : 10 false
+round : 662 count : 19 false
+round : 661 count : 21 false
+round : 660 count : 22 false
+round : 659 count : 10
+round : 658 count : 20 false
+round : 657 count : 23 false
+round : 656 count : 12 false
+round : 655 count : 11 false
+round : 654 count : 10 false
+round : 653 count : 18 false
+hitRate = 30.000000.2
+realHitRate = 21.014493.2
+averageRate = 9.039602.2
+=====================================
+testCount = 20
+analysisCount = 11
+minRange = 57
+maxRange = 172
+rangeIncrease = 21
 minSeq = 4
-maxSeq = 7
-round : 672 count : 33 false
-round : 671 count : 36 false
-round : 670 count : 36 false
-round : 669 count : 35 false
-round : 668 count : 35 false
-round : 667 count : 16 false
-round : 666 count : 16 false
-round : 665 count : 16 false
-round : 664 count : 21 false
-round : 663 count : 14
-round : 662 count : 16 false
-round : 661 count : 16 false
-round : 660 count : 23 false
-round : 659 count : 18 false
-round : 658 count : 18 false
-round : 657 count : 45 false
-round : 656 count : 45 false
-round : 655 count : 19 false
-round : 654 count : 27 false
-round : 653 count : 27 false
-hitRate = 5.000000.2
-realHitRate = 2.734375.2
-averageRate = 0.333110.2
+maxSeq = 11
+round : 672 count : 11
+round : 671 count : 11
+round : 670 count : 10
+round : 669 count : 7
+round : 668 count : 10 false
+round : 667 count : 9
+round : 666 count : 11 false
+round : 665 count : 23 false
+round : 664 count : 12 false
+round : 663 count : 10 false
+round : 662 count : 10
+round : 661 count : 12 false
+round : 660 count : 15 false
+round : 659 count : 36 false
+round : 658 count : 12 false
+round : 657 count : 16 false
+round : 656 count : 12 false
+round : 655 count : 11 false
+round : 654 count : 10 false
+round : 653 count : 18 false
+hitRate = 30.000000.2
+realHitRate = 21.804511.2
+averageRate = 9.039602.2
+=====================================
+testCount = 20
+analysisCount = 11
+minRange = 57
+maxRange = 172
+rangeIncrease = 21
+minSeq = 8
+maxSeq = 11
+round : 672 count : 11
+round : 671 count : 11
+round : 670 count : 10
+round : 669 count : 7
+round : 668 count : 10 false
+round : 667 count : 9
+round : 666 count : 11 false
+round : 665 count : 23 false
+round : 664 count : 12 false
+round : 663 count : 10 false
+round : 662 count : 10
+round : 661 count : 12 false
+round : 660 count : 15 false
+round : 659 count : 30 false
+round : 658 count : 12 false
+round : 657 count : 16 false
+round : 656 count : 12 false
+round : 655 count : 11 false
+round : 654 count : 10 false
+round : 653 count : 18 false
+hitRate = 30.000000.2
+realHitRate = 22.307692.2
+averageRate = 11.125664.2
+=====================================
+testCount = 20
+analysisCount = 11
+minRange = 57
+maxRange = 172
+rangeIncrease = 21
+minSeq = 3
+maxSeq = 11
+round : 672 count : 11
+round : 671 count : 11
+round : 670 count : 10
+round : 669 count : 7
+round : 668 count : 10 false
+round : 667 count : 9
+round : 666 count : 11 false
+round : 665 count : 19 false
+round : 664 count : 12 false
+round : 663 count : 10 false
+round : 662 count : 19 false
+round : 661 count : 21 false
+round : 660 count : 22 false
+round : 659 count : 10
+round : 658 count : 20 false
+round : 657 count : 23 false
+round : 656 count : 12 false
+round : 655 count : 11 false
+round : 654 count : 10 false
+round : 653 count : 18 false
+hitRate = 30.000000.2
+realHitRate = 21.014493.2
+averageRate = 9.039602.2
+=====================================
+testCount = 20
+analysisCount = 11
+minRange = 57
+maxRange = 118
+rangeIncrease = 21
+minSeq = 7
+maxSeq = 11
+round : 672 count : 11
+round : 671 count : 11
+round : 670 count : 10
+round : 669 count : 7
+round : 668 count : 10 false
+round : 667 count : 9
+round : 666 count : 11 false
+round : 665 count : 14
+round : 664 count : 12 false
+round : 663 count : 10 false
+round : 662 count : 10
+round : 661 count : 12 false
+round : 660 count : 15 false
+round : 659 count : 21 false
+round : 658 count : 15 false
+round : 657 count : 17 false
+round : 656 count : 12 false
+round : 655 count : 15 false
+round : 654 count : 10 false
+round : 653 count : 16 false
+hitRate = 35.000000.2
+realHitRate = 29.032258.2
+averageRate = 11.125664.2
+=====================================
+testCount = 20
+analysisCount = 11
+minRange = 57
+maxRange = 118
+rangeIncrease = 21
+minSeq = 11
+maxSeq = 11
+round : 672 count : 11
+round : 671 count : 11
+round : 670 count : 10
+round : 669 count : 7
+round : 668 count : 10 false
+round : 667 count : 9
+round : 666 count : 11 false
+round : 665 count : 14
+round : 664 count : 12 false
+round : 663 count : 10 false
+round : 662 count : 10
+round : 661 count : 12 false
+round : 660 count : 15 false
+round : 659 count : 10
+round : 658 count : 15 false
+round : 657 count : 9
+round : 656 count : 12 false
+round : 655 count : 15 false
+round : 654 count : 10 false
+round : 653 count : 7
+hitRate = 50.000000.2
+realHitRate = 44.545455.2
+averageRate = 16.511898.2
+=====================================
+testCount = 20
+analysisCount = 11
+minRange = 57
+maxRange = 118
+rangeIncrease = 21
+minSeq = 9
+maxSeq = 11
+round : 672 count : 11
+round : 671 count : 11
+round : 670 count : 10
+round : 669 count : 7
+round : 668 count : 10 false
+round : 667 count : 9
+round : 666 count : 11 false
+round : 665 count : 14
+round : 664 count : 12 false
+round : 663 count : 10 false
+round : 662 count : 10
+round : 661 count : 12 false
+round : 660 count : 15 false
+round : 659 count : 21 false
+round : 658 count : 15 false
+round : 657 count : 17 false
+round : 656 count : 12 false
+round : 655 count : 15 false
+round : 654 count : 10 false
+round : 653 count : 16 false
+hitRate = 35.000000.2
+realHitRate = 29.032258.2
+averageRate = 11.125664.2
+=====================================
+testCount = 20
+analysisCount = 11
+minRange = 57
+maxRange = 118
+rangeIncrease = 21
+minSeq = 10
+maxSeq = 11
+round : 672 count : 11
+round : 671 count : 11
+round : 670 count : 10
+round : 669 count : 7
+round : 668 count : 10 false
+round : 667 count : 9
+round : 666 count : 11 false
+round : 665 count : 14
+round : 664 count : 12 false
+round : 663 count : 10 false
+round : 662 count : 10
+round : 661 count : 12 false
+round : 660 count : 15 false
+round : 659 count : 21 false
+round : 658 count : 15 false
+round : 657 count : 17 false
+round : 656 count : 12 false
+round : 655 count : 15 false
+round : 654 count : 10 false
+round : 653 count : 16 false
+hitRate = 35.000000.2
+realHitRate = 29.032258.2
+averageRate = 11.125664.2
 =====================================
