@@ -25,6 +25,7 @@ import com.rs.lottoweb.domain.LottoVariable;
 import com.rs.lottoweb.mapper.LottoExclusionMapper;
 import com.rs.lottoweb.mapper.LottoFrequentMapper;
 import com.rs.lottoweb.mapper.LottoHistoryMapper;
+import com.rs.lottoweb.mapper.LottoInvertMapper;
 
 @Service
 @Transactional(readOnly=true)
@@ -48,6 +49,9 @@ public class LottoServiceImpl implements LottoService{
 	LottoFrequentMapper lottoFrequentMapper;
 	
 	@Autowired
+	LottoInvertMapper lottoInvertMapper;
+	
+	@Autowired
 	LottoVariableService lottoVariableService;
 	
 	//주기적으로 제외수 분석
@@ -56,6 +60,7 @@ public class LottoServiceImpl implements LottoService{
 	@Transactional(readOnly=false)
 	public void scheduleAnalysis(){
 		clearAllCache();
+		Map<String, List<Integer>> ex = new HashMap<String, List<Integer>>();
 		
 		//제외수가 없으면
 		int round = getCurrentNumber() + 1;
@@ -86,7 +91,41 @@ public class LottoServiceImpl implements LottoService{
 			Map<String, Object> params = new HashMap<String, Object>();
 			params.put("round", round);
 			params.put("list", exclusionNums);
+			ex.put("ex", exclusionNums);
 			lottoExclusionMapper.insert(params);
+		}
+		
+		
+		//제외수가 없으면
+		List<Integer> invertNums = getAnalysedInvertNumbers(round);
+		if(invertNums == null || invertNums.size() < 1){
+			//TODO 환경변수에서 가져와야 함!
+			int analysisCount = lottoVariableService.selectByName(LottoVariable.IV_ANAL_COUNT, LottoVariable.IV_ANAL_COUNT_VAL);
+			int minRange = lottoVariableService.selectByName(LottoVariable.IV_MIN_RANGE, LottoVariable.IV_MIN_RANGE_VAL);
+			int maxRange = lottoVariableService.selectByName(LottoVariable.IV_MAX_RANGE, LottoVariable.IV_MAX_RANGE_VAL);
+			int rangeIncrease = lottoVariableService.selectByName(LottoVariable.IV_RANGE_INC, LottoVariable.IV_RANGE_INC_VAL);
+			int minSeq = lottoVariableService.selectByName(LottoVariable.IV_MIN_SEQUENCE, LottoVariable.IV_MIN_SEQUENCE_VAL);
+			int maxSeq = lottoVariableService.selectByName(LottoVariable.IV_MAX_SEQUENCE, LottoVariable.IV_MAX_SEQUENCE_VAL);
+			
+			List<AnalysisResult> analList = analysisExclusion(
+					round-1, analysisCount, minRange, maxRange, rangeIncrease, minSeq, maxSeq);
+			invertNums = new ArrayList<Integer>();
+			for(AnalysisResult anal : analList){
+				invertNums.addAll(getExclusionNumber(round, anal.getRange(), anal.getSequence()));
+			}
+			
+			invertNums = removeDuplicate(invertNums);
+			
+			if(invertNums.size() >= 39){
+				//TODO 메일 리포팅
+			}
+			
+			//nums를 돌아가면서 insert  db 커넥션을 줄이기 위해 한번에 삽입
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("round", round);
+			params.put("list", invertNums);
+			ex.put("inv", invertNums);
+			lottoInvertMapper.insert(params);
 		}
 		
 		
@@ -106,18 +145,45 @@ public class LottoServiceImpl implements LottoService{
 				frequentNums.addAll(getFrequentNumber(round, anal.getRange(), anal.getSequence()));
 			}
 			frequentNums = removeDuplicate(frequentNums);
+			if(frequentNums.size() < 6){
+				frequentNums.clear();
+				for(int i = 1; i <=45; i++){
+					frequentNums.add(i);
+				}
+			}
 			frequentNums.removeAll(exclusionNums);
+			frequentNums.removeAll(invertNums);
 			
 			if(frequentNums.size() < 6){
 				//TODO 메일 리포팅
+				for(int i = 0; i < exclusionNums.size(); i++){
+					System.out.print(exclusionNums.get(i) + ", ");
+				}
+				System.out.println();
+				for(int i = 0; i < invertNums.size(); i++){
+					System.out.print(invertNums.get(i) + ", ");
+				}
+				System.out.println();
 			}
 			
 			Map<String, Object> params = new HashMap<String, Object>();
 			params.put("round", round);
 			params.put("list", frequentNums);
-			lottoFrequentMapper.insert(params);
+			try {
+				lottoFrequentMapper.insert(params);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			for(Integer i :  ex.get("ex")){
+				System.out.print(i + ",");
+			}
+			System.out.println();
+			for(Integer i :  ex.get("inv")){
+				System.out.print(i + ",");
+			}
+			System.out.println();
+			
 		}
-		
 		
 	}
 	
@@ -188,6 +254,8 @@ public class LottoServiceImpl implements LottoService{
 			}
 			
 			list = getMaxCount(list, sequence);
+			if(list == null || list.size() < 1)
+				continue;
 			
 			param.put("round", lottoRound);
 			param.put("list", list);
@@ -222,7 +290,7 @@ public class LottoServiceImpl implements LottoService{
 				compareIndex = i;
 			}
 		}
-		return list;
+		return null;
 	}
 	
 	@Override
@@ -322,6 +390,11 @@ public class LottoServiceImpl implements LottoService{
 		return lottoExclusionMapper.selectByRound(round);
 	}
 	
+	@Override
+	public List<Integer> getAnalysedInvertNumbers(int round) {
+		return lottoInvertMapper.selectByRound(round);
+	}
+	
 	
 	@Override
 	public List<Integer> getFrequentNumber(int lottoRound, int analRange, int sequence) {
@@ -352,6 +425,8 @@ public class LottoServiceImpl implements LottoService{
 				pairFrequentCache.put(pairKey, list);
 			}
 			list = getMaxCount(list, sequence);
+			if(list == null || list.size() < 1)
+				continue;
 			
 			params.put("round", lottoRound);
 			params.put("list", list);
@@ -382,7 +457,9 @@ public class LottoServiceImpl implements LottoService{
 					int round = startRound - i;
 					List<Integer> nums = getFrequentNumber(round, range, seq);
 					
-					if(nums.size() < 45 && getHitCount(nums, round) == 6 )
+//					if(nums.size() < 45 && getHitCount(nums, round) == 6 )
+					//45가 너무 많아 43으로 줄임
+					if(nums.size() <= 40 && getHitCount(nums, round) == 6 )
 						successCount++;
 				}
 				
@@ -423,11 +500,23 @@ public class LottoServiceImpl implements LottoService{
 		return count;
 	}
 	
+	@Override
+	public double getHitRate(int all, int hitCount, int expect){
+		try {
+			return CombinatoricsUtils.binomialCoefficientDouble(hitCount, expect) 
+					* CombinatoricsUtils.binomialCoefficientDouble(all - hitCount, 6 - expect) 
+					/ CombinatoricsUtils.binomialCoefficientDouble(all, 6);
+		} catch (Exception e) {
+			return 0;
+		}
+	}
 	
 	@Override
 	public double getHitRateDenominator(int all, int hitCount, int expect){
 		try {
-			return CombinatoricsUtils.binomialCoefficientDouble(all, 6) / (CombinatoricsUtils.binomialCoefficientDouble(hitCount, expect) * CombinatoricsUtils.binomialCoefficientDouble(all-hitCount, 6-expect));
+			return CombinatoricsUtils.binomialCoefficientDouble(all, 6) 
+					/ (CombinatoricsUtils.binomialCoefficientDouble(hitCount, expect) 
+							* CombinatoricsUtils.binomialCoefficientDouble(all - hitCount, 6 - expect));
 		} catch (Exception e) {
 			return -1;
 		}
@@ -436,7 +525,7 @@ public class LottoServiceImpl implements LottoService{
 	@Override
 	public String getHitRateString(int all, int hitCount, int expect){
 		if(hitCount < expect
-				|| all-hitCount < 6-expect 
+				|| all - hitCount < 6 - expect 
 				|| all < 6)
 			return "0";
 		
@@ -457,6 +546,17 @@ public class LottoServiceImpl implements LottoService{
 	@Override
 	public List<Integer> getAnalysedFrequentNumbers(int round) {
 		return lottoFrequentMapper.selectByRound(round);
+	}
+
+
+	@Override
+	public List<Integer> invert(List<Integer> list) {
+		List<Integer> invertList = new ArrayList<Integer>();
+		for(int i = 1; i <= 45; i++){
+			if(!list.contains(i))
+				invertList.add(i);
+		}
+		return invertList;
 	}
 	
 	

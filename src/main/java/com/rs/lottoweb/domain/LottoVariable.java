@@ -16,21 +16,33 @@ public class LottoVariable {
 	public static final String FR_MIN_SEQUENCE = "frequentMinSequence";
 	public static final String FR_MAX_SEQUENCE = "frequentMaxSequence";
 	
+	public static final String IV_ANAL_COUNT = "invertAnalysisCount";
+	public static final String IV_MIN_RANGE = "invertMinRange";
+	public static final String IV_MAX_RANGE = "invertMaxRange";
+	public static final String IV_RANGE_INC = "invertRangeIncrease";
+	public static final String IV_MIN_SEQUENCE = "invertMinSequence";
+	public static final String IV_MAX_SEQUENCE = "invertMaxSequence";
 	
-	public static final int EX_ANAL_COUNT_VAL = 18;
-	public static final int EX_MIN_RANGE_VAL = 25;
-	public static final int EX_MAX_RANGE_VAL = 148;
-	public static final int EX_RANGE_INC_VAL = 13;
-	public static final int EX_MIN_SEQUENCE_VAL = 4;
-	public static final int EX_MAX_SEQUENCE_VAL = 7;
+	public static final int EX_ANAL_COUNT_VAL		= 10;
+	public static final int EX_MIN_RANGE_VAL 		= 16;
+	public static final int EX_MAX_RANGE_VAL 		= 87;
+	public static final int EX_RANGE_INC_VAL 		= 11;
+	public static final int EX_MIN_SEQUENCE_VAL 	= 7;
+	public static final int EX_MAX_SEQUENCE_VAL	= 10;
 	
-	public static final int FR_ANAL_COUNT_VAL = 16;
-	public static final int FR_MIN_RANGE_VAL = 27;
-	public static final int FR_MAX_RANGE_VAL = 138;
-	public static final int FR_RANGE_INC_VAL = 6;
-	public static final int FR_MIN_SEQUENCE_VAL = 3;
-	public static final int FR_MAX_SEQUENCE_VAL = 3;
+	public static final int FR_ANAL_COUNT_VAL 		= 11;
+	public static final int FR_MIN_RANGE_VAL 		= 34;
+	public static final int FR_MAX_RANGE_VAL 		= 135;
+	public static final int FR_RANGE_INC_VAL 		= 13;
+	public static final int FR_MIN_SEQUENCE_VAL 	= 6;
+	public static final int FR_MAX_SEQUENCE_VAL	= 11;
 	
+	public static final int IV_ANAL_COUNT_VAL 		= 13;
+	public static final int IV_MIN_RANGE_VAL 		= 52;
+	public static final int IV_MAX_RANGE_VAL 		= 151;
+	public static final int IV_RANGE_INC_VAL 			= 15;
+	public static final int IV_MIN_SEQUENCE_VAL 	= 5;
+	public static final int IV_MAX_SEQUENCE_VAL	= 11;
 	
 	
 	private String name;

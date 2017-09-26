@@ -154,4 +154,14 @@ public interface LottoService {
 	public void clearAllCache();
 	
 	
+	/**
+	 * 숫자를 뒤집음
+	 * @param list
+	 * @return
+	 */
+	public List<Integer> invert(List<Integer> list);
+
+	double getHitRate(int all, int hitCount, int expect);
+
+	List<Integer> getAnalysedInvertNumbers(int round);
 }

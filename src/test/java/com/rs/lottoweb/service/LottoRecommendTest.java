@@ -32,17 +32,21 @@ public class LottoRecommendTest {
 
 
 	@Test
+//	@Ignore
 	public void testAnalysis(){
 
 		lottoService.scheduleAnalysis();
 
 		List<Integer> nums = lottoService.getAnalysedFrequentNumbers(lottoService.getCurrentNumber()+1);
-		
+//		List<Integer> nums = lottoService.getAnalysedFrequentNumbers(lottoService.getCurrentNumber()); // 저번주 회차 확인;
 		
 		Random rand = new Random(System.currentTimeMillis());
 
-		for(int j = 0; j < 20; j++){
+		for(int j = 0; j < 15; j++){
 			List<Integer> numList = new ArrayList<Integer>();
+			if(numList.size() >= nums.size())
+				break;
+
 			for(int i = 0; i < 6; i++){
 				int index = rand.nextInt(nums.size());
 				if(numList.contains(nums.get(index))){
@@ -59,11 +63,17 @@ public class LottoRecommendTest {
 				System.out.print(num + ", ");
 			}
 			System.out.println();
+			if(j % 5 == 4)
+				System.out.println();
 		}
 		
+		for( int num : nums){
+			System.out.print(num + ", ");
+		}
+		System.out.println();
+		System.out.println(nums.size());
+		
 	}	
-
-
 
 	@Test
 	@Ignore
@@ -93,12 +103,11 @@ public class LottoRecommendTest {
 	@Test
 	@Ignore
 	public void test(){
-		List<Integer> list = Arrays.asList(1, 2, 3, 4, 5, 7, 8, 9, 11, 12, 13, 14, 16
-				, 17, 18, 19, 20, 21, 24, 25, 27, 28, 29, 30, 34, 37, 38, 40, 43, 44);
+		List<Integer> list = Arrays.asList(1, 2, 4, 5, 6, 7, 9, 10, 12, 14, 15, 16, 18, 23, 25, 26, 29, 30, 31, 35, 38, 40, 41, 44, 45);
  		
 		Random rand = new Random();
 
-		for(int j = 0; j < 10; j++){
+		for(int j = 0; j < 5; j++){
 			List<Integer> numList = new ArrayList<Integer>();
 			for(int i = 0; i < 6; i++){
 				int index = rand.nextInt(list.size());

@@ -25,6 +25,12 @@ CREATE TABLE LottoFrequent(
 	, PRIMARY KEY(round, num)
 );
 
+CREATE TABLE LottoInvert(
+	round INT NOT NULL
+	, num INT NOT NULL
+	, PRIMARY KEY(round, num)
+);
+
 CREATE TABLE LottoVariable(
 	name varchar(30) NOT NULL
 	, value varchar(30) NOT NULL
