@@ -12,6 +12,8 @@ import java.util.Map;
 
 import org.apache.commons.math3.util.CombinatoricsUtils;
 import org.apache.http.client.fluent.Request;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,9 @@ import com.rs.lottoweb.mapper.LottoInvertMapper;
 @Service
 @Transactional(readOnly=true)
 public class LottoServiceImpl implements LottoService{
+	
+	@SuppressWarnings("unused")
+	private static final Logger logger = LoggerFactory.getLogger(LottoService.class) ;
 	
 	private Map<String, List<LottoAnalysis>> pairExclusionCache = new HashMap<String, List<LottoAnalysis>>();
 	private Map<String, List<Integer>> seqExclusionCache = new HashMap<String, List<Integer>>();
@@ -210,7 +215,10 @@ public class LottoServiceImpl implements LottoService{
 			} catch (Exception e) {}
 			
 			if(history == null || history.getRound() != i){
-				String jsonString = Request.Get(url + i).execute().returnContent().asString();
+				String jsonString = Request.Get(url + i)
+						.execute()
+						.returnContent()
+						.asString();
 				history = gson.fromJson(jsonString, LottoHistory.class);
 				history.setRound(i);
 				insert(history);
@@ -557,6 +565,12 @@ public class LottoServiceImpl implements LottoService{
 				invertList.add(i);
 		}
 		return invertList;
+	}
+
+
+	@Override
+	public List<LottoHistory> getAllRound() {
+		return lottoHistoryMapper.selectAllRound();
 	}
 	
 	

@@ -164,4 +164,7 @@ public interface LottoService {
 	double getHitRate(int all, int hitCount, int expect);
 
 	List<Integer> getAnalysedInvertNumbers(int round);
+
+	List<LottoHistory> getAllRound();
+
 }
