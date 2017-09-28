@@ -5,6 +5,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.lang.reflect.Type;
+import java.net.URI;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -31,6 +36,7 @@ public class LottoToJsonTest {
 	public static final int day = 8;
 
 	ClassPathResource lottoResource;
+	URL testJson;
 	Gson gson;
 	File jsonLocation;
 	File sqlLocation;
@@ -38,6 +44,7 @@ public class LottoToJsonTest {
 	@Before
 	public void setUp() throws Exception{
 		lottoResource = new ClassPathResource("lotto.json");
+//		testJson = getClass().getResource("lotto.json");
 		gson = new Gson();
 		jsonLocation = new File("data", "lotto.json");
 		sqlLocation = new File("data", "data.sql");
@@ -46,13 +53,13 @@ public class LottoToJsonTest {
 
 	@Test
 	public void generateJsonFile() throws Exception{
-
 		String url = "http://www.lottonumber.co.kr/ajax.winnum.php?cnt=";
 		int current = getCurrentNumber();
 		JsonArray jarr = new JsonArray();
 		
 		//json 읽어옴
 		List<LottoHistory> lottoList = readJson(lottoResource.getFile());
+//		List<LottoHistory> lottoList = readJson(new File(testJson.getFile()));
 
 		int start = 0;
 		for(int i = min; i <= current; i++){
@@ -62,10 +69,12 @@ public class LottoToJsonTest {
 				history = lottoList.get(start);
 			} catch (Exception e) {}
 
-			
 			if(history == null || history.getRound() != i){
 				//웹에서 제이슨을 가져와 history객체 생성
-				String jsonString = Request.Get(url + i).execute().returnContent().asString();
+				String jsonString = Request.Get(url + i)
+						.execute()
+						.returnContent()
+						.asString();
 				history = gson.fromJson(jsonString, LottoHistory.class);
 				history.setRound(i);
 			} else {
@@ -81,6 +90,8 @@ public class LottoToJsonTest {
 		gson.toJson(jarr, jw);
 		jw.flush();
 		jw.close();
+		
+		Files.copy(Paths.get(jsonLocation.toURI()) , Paths.get(new File("src/test/resources", "lotto.json").toURI()), StandardCopyOption.REPLACE_EXISTING );
 		
 		generateSQL();
 	}
@@ -117,6 +128,8 @@ public class LottoToJsonTest {
 		}
 		bw.flush();
 		bw.close();
+		
+		Files.copy(Paths.get(sqlLocation.toURI()) , Paths.get(new File("src/main/resources", "data.sql").toURI()), StandardCopyOption.REPLACE_EXISTING );
 	}
 	
 
