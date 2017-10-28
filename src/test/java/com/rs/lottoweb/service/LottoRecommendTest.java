@@ -11,16 +11,21 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import com.rs.lottoweb.LottoBootApplication;
 import com.rs.lottoweb.domain.AnalysisResult;
+import com.rs.lottoweb.domain.ExclusionAnalysisProperty;
+import com.rs.lottoweb.domain.FrequentAnalysisProperty;
+import com.rs.lottoweb.domain.InvertAnalysisProperty;
 import com.rs.lottoweb.mapper.LottoHistoryMapper;
 
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes={LottoBootApplication.class})
+@RunWith(SpringRunner.class)
+@SpringBootTest //can be used as an alternative to the standard spring-test @ContextConfiguration
 public class LottoRecommendTest {
 
 
@@ -42,7 +47,7 @@ public class LottoRecommendTest {
 		
 		Random rand = new Random(System.currentTimeMillis());
 
-		for(int j = 0; j < 15; j++){
+		for(int j = 0; j < 10; j++){
 			List<Integer> numList = new ArrayList<Integer>();
 			if(numList.size() >= nums.size())
 				break;

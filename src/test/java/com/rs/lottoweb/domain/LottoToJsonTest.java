@@ -1,9 +1,12 @@
 package com.rs.lottoweb.domain;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URL;
@@ -49,6 +52,29 @@ public class LottoToJsonTest {
 		jsonLocation = new File("data", "lotto.json");
 		sqlLocation = new File("data", "data.sql");
 	}
+	
+	@Test
+	public void generateProperties() throws Exception {
+		File properties = new File("src/main/resources/application.properties");
+		BufferedWriter bw = new BufferedWriter(new FileWriter(properties));
+		
+		readAnalysis("data/analysisFrequentResult.txt", bw);
+		readAnalysis("data/analysisInvertResult.txt", bw);
+		readAnalysis("data/analysisResult.txt", bw);
+		bw.flush();
+		bw.close();
+	}
+	
+	private void readAnalysis(String analysisFile, Writer writer) throws IOException{
+		FileReader fr = new FileReader(analysisFile);
+		BufferedReader br = new BufferedReader(fr);
+		for(int i = 0; i < 7; i++){
+			writer.write( br.readLine());
+			writer.write("\n");
+		}
+		br.close();
+	}
+	
 
 
 	@Test

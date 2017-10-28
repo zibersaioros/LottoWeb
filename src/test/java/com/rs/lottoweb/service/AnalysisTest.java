@@ -14,17 +14,24 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import com.rs.lottoweb.LottoBootApplication;
 import com.rs.lottoweb.domain.AnalysisResult;
+import com.rs.lottoweb.domain.ExclusionAnalysisProperty;
+import com.rs.lottoweb.domain.FrequentAnalysisProperty;
+import com.rs.lottoweb.domain.InvertAnalysisProperty;
 import com.rs.lottoweb.domain.LottoHistory;
 import com.rs.lottoweb.domain.LottoVariable;
 
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes={LottoBootApplication.class})
+//@RunWith(SpringJUnit4ClassRunner.class)
+//@ContextConfiguration(classes={LottoBootApplication.class})
+@RunWith(SpringRunner.class)
+@SpringBootTest //can be used as an alternative to the standard spring-test @ContextConfiguration
 public class AnalysisTest {
 	public static final int MODE_EXCLUSION = 1;
 	public static final int MODE_FREQUENT = 2;
@@ -34,6 +41,13 @@ public class AnalysisTest {
 	
 	@Autowired
 	LottoService lottoService;
+	
+	@Autowired
+	FrequentAnalysisProperty frequentAnal;
+	@Autowired
+	ExclusionAnalysisProperty exclusionAnal;
+	@Autowired
+	InvertAnalysisProperty invertAnal;
 
 	Random random = new Random(System.currentTimeMillis());
 	
@@ -58,6 +72,7 @@ public class AnalysisTest {
 		standardDenominator4 = lottoService.getHitRateDenominator(45, 6, 4);
 		standardDenominator3 = lottoService.getHitRateDenominator(45, 6, 3);
 	}
+	
 
 	@Test
 //	@Ignore
@@ -79,12 +94,12 @@ public class AnalysisTest {
 			int[][] arr = {analysisCountArr, minRangeArr, maxRangeArr, rangeIncreaseArr, minSeqArr, maxSeqArr};
 			varArr = arr;
 		} else {
-			int[] analysisCountArr = {LottoVariable.EX_ANAL_COUNT_VAL, LottoVariable.EX_ANAL_COUNT_VAL};
-			int[] minRangeArr = {LottoVariable.EX_MIN_RANGE_VAL, LottoVariable.EX_MIN_RANGE_VAL};
-			int[] maxRangeArr = {LottoVariable.EX_MAX_RANGE_VAL, LottoVariable.EX_MAX_RANGE_VAL};
-			int[] rangeIncreaseArr = {LottoVariable.EX_RANGE_INC_VAL, LottoVariable.EX_RANGE_INC_VAL};
-			int[] minSeqArr = {LottoVariable.EX_MIN_SEQUENCE_VAL, LottoVariable.EX_MIN_SEQUENCE_VAL};
-			int[] maxSeqArr = {LottoVariable.EX_MAX_SEQUENCE_VAL, LottoVariable.EX_MAX_SEQUENCE_VAL};
+			int[] analysisCountArr = {exclusionAnal.getAnalysisCount(), exclusionAnal.getAnalysisCount()};
+			int[] minRangeArr = {exclusionAnal.getMinRange(), exclusionAnal.getMinRange()};
+			int[] maxRangeArr = {exclusionAnal.getMaxRange(), exclusionAnal.getMaxRange()};
+			int[] rangeIncreaseArr = {exclusionAnal.getRangeIncrease(), exclusionAnal.getRangeIncrease()};
+			int[] minSeqArr = {exclusionAnal.getMinSeq(), exclusionAnal.getMinSeq()};
+			int[] maxSeqArr = {exclusionAnal.getMaxSeq(), exclusionAnal.getMaxSeq()};
 			
 			int[][] arr = {analysisCountArr, minRangeArr, maxRangeArr, rangeIncreaseArr, minSeqArr, maxSeqArr};
 			varArr = arr;
@@ -135,12 +150,12 @@ public class AnalysisTest {
 			int[][] arr = {analysisCountArr, minRangeArr, maxRangeArr, rangeIncreaseArr, minSeqArr, maxSeqArr};
 			varArr = arr;
 		} else {
-			int[] analysisCountArr = {LottoVariable.FR_ANAL_COUNT_VAL, LottoVariable.FR_ANAL_COUNT_VAL};
-			int[] minRangeArr = {LottoVariable.FR_MIN_RANGE_VAL, LottoVariable.FR_MIN_RANGE_VAL};
-			int[] maxRangeArr = {LottoVariable.FR_MAX_RANGE_VAL, LottoVariable.FR_MAX_RANGE_VAL};
-			int[] rangeIncreaseArr = {LottoVariable.FR_RANGE_INC_VAL, LottoVariable.FR_RANGE_INC_VAL};
-			int[] minSeqArr = {LottoVariable.FR_MIN_SEQUENCE_VAL, LottoVariable.FR_MIN_SEQUENCE_VAL};
-			int[] maxSeqArr = {LottoVariable.FR_MAX_SEQUENCE_VAL, LottoVariable.FR_MAX_SEQUENCE_VAL};
+			int[] analysisCountArr = {frequentAnal.getAnalysisCount(), frequentAnal.getAnalysisCount()};
+			int[] minRangeArr = {frequentAnal.getMinRange(), frequentAnal.getMinRange()};
+			int[] maxRangeArr = {frequentAnal.getMaxRange(), frequentAnal.getMaxRange()};
+			int[] rangeIncreaseArr = {frequentAnal.getRangeIncrease(), frequentAnal.getRangeIncrease()};
+			int[] minSeqArr = {frequentAnal.getMinSeq(), frequentAnal.getMinSeq()};
+			int[] maxSeqArr = {frequentAnal.getMaxSeq(), frequentAnal.getMaxSeq()};
 			
 			int[][] arr = {analysisCountArr, minRangeArr, maxRangeArr, rangeIncreaseArr, minSeqArr, maxSeqArr};
 			varArr = arr;
@@ -185,12 +200,12 @@ public class AnalysisTest {
 			int[][] arr = {analysisCountArr, minRangeArr, maxRangeArr, rangeIncreaseArr, minSeqArr, maxSeqArr};
 			varArr = arr;
 		} else {
-			int[] analysisCountArr = {LottoVariable.IV_ANAL_COUNT_VAL, LottoVariable.IV_ANAL_COUNT_VAL};
-			int[] minRangeArr = {LottoVariable.IV_MIN_RANGE_VAL, LottoVariable.IV_MIN_RANGE_VAL};
-			int[] maxRangeArr = {LottoVariable.IV_MAX_RANGE_VAL, LottoVariable.IV_MAX_RANGE_VAL};
-			int[] rangeIncreaseArr = {LottoVariable.IV_RANGE_INC_VAL, LottoVariable.IV_RANGE_INC_VAL};
-			int[] minSeqArr = {LottoVariable.IV_MIN_SEQUENCE_VAL, LottoVariable.IV_MIN_SEQUENCE_VAL};
-			int[] maxSeqArr = {LottoVariable.IV_MAX_SEQUENCE_VAL, LottoVariable.IV_MAX_SEQUENCE_VAL};
+			int[] analysisCountArr = {invertAnal.getAnalysisCount(), invertAnal.getAnalysisCount()};
+			int[] minRangeArr = {invertAnal.getMinRange(), invertAnal.getMinRange()};
+			int[] maxRangeArr = {invertAnal.getMaxRange(), invertAnal.getMaxRange()};
+			int[] rangeIncreaseArr = {invertAnal.getRangeIncrease(), invertAnal.getRangeIncrease()};
+			int[] minSeqArr = {invertAnal.getMinSeq(), invertAnal.getMinSeq()};
+			int[] maxSeqArr = {invertAnal.getMaxSeq(), invertAnal.getMaxSeq()};
 			
 			int[][] arr = {analysisCountArr, minRangeArr, maxRangeArr, rangeIncreaseArr, minSeqArr, maxSeqArr};
 			varArr = arr;
@@ -347,13 +362,13 @@ public class AnalysisTest {
 private String executeAnalysisExclusion(int testCount, int analysisCount, int minRange, int maxRange, int rangeIncrease, int minSeq, int maxSeq){
 		
 		StringBuffer subBuffer = new StringBuffer();
-		subBuffer.append("testCount = " + testCount + "\n");
-		subBuffer.append("analysisCount = " + analysisCount + "\n");
-		subBuffer.append("minRange = " + minRange + "\n");
-		subBuffer.append("maxRange = " + maxRange + "\n");
-		subBuffer.append("rangeIncrease = " + rangeIncrease + "\n");
-		subBuffer.append("minSeq = " + minSeq + "\n");
-		subBuffer.append("maxSeq = " + maxSeq + "\n");
+		subBuffer.append("exclusion.testCount=" + testCount + "\n");
+		subBuffer.append("exclusion.analysisCount=" + analysisCount + "\n");
+		subBuffer.append("exclusion.minRange=" + minRange + "\n");
+		subBuffer.append("exclusion.maxRange=" + maxRange + "\n");
+		subBuffer.append("exclusion.rangeIncrease=" + rangeIncrease + "\n");
+		subBuffer.append("exclusion.minSeq=" + minSeq + "\n");
+		subBuffer.append("exclusion.maxSeq=" + maxSeq + "\n");
 		int hit4Count = 0;
 		double forthSum = 0;
 		int hit3Count = 0;
@@ -449,13 +464,13 @@ private String executeAnalysisExclusion(int testCount, int analysisCount, int mi
 	private String executeAnalysisFrequent(int testCount, int analysisCount, int minRange, int maxRange, int rangeIncrease, int minSeq, int maxSeq){
 		
 		StringBuffer subBuffer = new StringBuffer();
-		subBuffer.append("testCount = " + testCount + "\n");
-		subBuffer.append("analysisCount = " + analysisCount + "\n");
-		subBuffer.append("minRange = " + minRange + "\n");
-		subBuffer.append("maxRange = " + maxRange + "\n");
-		subBuffer.append("rangeIncrease = " + rangeIncrease + "\n");
-		subBuffer.append("minSeq = " + minSeq + "\n");
-		subBuffer.append("maxSeq = " + maxSeq + "\n");
+		subBuffer.append("frequent.testCount=" + testCount + "\n");
+		subBuffer.append("frequent.analysisCount=" + analysisCount + "\n");
+		subBuffer.append("frequent.minRange=" + minRange + "\n");
+		subBuffer.append("frequent.maxRange=" + maxRange + "\n");
+		subBuffer.append("frequent.rangeIncrease=" + rangeIncrease + "\n");
+		subBuffer.append("frequent.minSeq=" + minSeq + "\n");
+		subBuffer.append("frequent.maxSeq=" + maxSeq + "\n");
 		int hit4Count = 0;
 		double forthSum = 0;
 		int hit3Count = 0;
@@ -550,13 +565,13 @@ private String executeAnalysisExclusion(int testCount, int analysisCount, int mi
 	private String executeAnalysisInvert(int testCount, int analysisCount, int minRange, int maxRange, int rangeIncrease, int minSeq, int maxSeq){
 		
 		StringBuffer subBuffer = new StringBuffer();
-		subBuffer.append("testCount = " + testCount + "\n");
-		subBuffer.append("analysisCount = " + analysisCount + "\n");
-		subBuffer.append("minRange = " + minRange + "\n");
-		subBuffer.append("maxRange = " + maxRange + "\n");
-		subBuffer.append("rangeIncrease = " + rangeIncrease + "\n");
-		subBuffer.append("minSeq = " + minSeq + "\n");
-		subBuffer.append("maxSeq = " + maxSeq + "\n");
+		subBuffer.append("invert.testCount=" + testCount + "\n");
+		subBuffer.append("invert.analysisCount=" + analysisCount + "\n");
+		subBuffer.append("invert.minRange=" + minRange + "\n");
+		subBuffer.append("invert.maxRange=" + maxRange + "\n");
+		subBuffer.append("invert.rangeIncrease=" + rangeIncrease + "\n");
+		subBuffer.append("invert.minSeq=" + minSeq + "\n");
+		subBuffer.append("invert.maxSeq=" + maxSeq + "\n");
 		int hit4Count = 0;
 		double forthSum = 0;
 		int hit3Count = 0;
