@@ -454,7 +454,7 @@ private String executeAnalysisExclusion(int testCount, int analysisCount, int mi
 		subBuffer.append("=====================================\n");
 		System.out.println(subBuffer.toString());
 		if( (average3 < standardDenominator3 * 0.65 && average4 < standardDenominator4 * 0.55 && average5 < standardDenominator5 * 0.45)
-				&& hit3Rate >= 70 && invalidCount < testCount * 0.3 && hit4Rate >= 60 && hit5Rate >= 50 )
+				&& hit3Rate > 70 && invalidCount < testCount * 0.3 && hit4Rate > 60 && hit5Rate > 50 )
 			return subBuffer.toString();
 		else
 			return null;
@@ -656,7 +656,7 @@ private String executeAnalysisExclusion(int testCount, int analysisCount, int mi
 		subBuffer.append(String.format("average3Rate = 1/%f.2\n", standardDenominator3));
 		subBuffer.append("=====================================\n");
 		System.out.println(subBuffer.toString());
-		if( (average4 < standardDenominator4 * 0.45)
+		if( (average4 < standardDenominator4 * 0.4)
 				&& hit4Rate >= 70 && invalidCount < testCount * 0.3)
 			return subBuffer.toString();
 		else

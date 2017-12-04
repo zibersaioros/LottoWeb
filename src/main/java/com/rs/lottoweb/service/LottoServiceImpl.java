@@ -72,7 +72,7 @@ public class LottoServiceImpl implements LottoService{
 	
 	//주기적으로 제외수 분석
 	@Override
-	@Scheduled(cron="0 30 2 */1 * *")
+//	@Scheduled(cron="0 30 2 */1 * *")
 	@Transactional(readOnly=false)
 	public void scheduleAnalysis(){
 		clearAllCache();

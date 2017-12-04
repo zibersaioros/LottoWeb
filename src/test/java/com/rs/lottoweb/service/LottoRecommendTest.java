@@ -37,7 +37,7 @@ public class LottoRecommendTest {
 
 
 	@Test
-//	@Ignore
+	@Ignore
 	public void testAnalysis(){
 
 		lottoService.scheduleAnalysis();
@@ -47,7 +47,7 @@ public class LottoRecommendTest {
 		
 		Random rand = new Random(System.currentTimeMillis());
 
-		for(int j = 0; j < 10; j++){
+		for(int j = 0; j < 5; j++){
 			List<Integer> numList = new ArrayList<Integer>();
 			if(numList.size() >= nums.size())
 				break;
@@ -106,12 +106,29 @@ public class LottoRecommendTest {
 	
 	
 	@Test
-	@Ignore
+//	@Ignore
 	public void test(){
-		List<Integer> list = Arrays.asList(1, 2, 4, 5, 6, 7, 9, 10, 12, 14, 15, 16, 18, 23, 25, 26, 29, 30, 31, 35, 38, 40, 41, 44, 45);
- 		
-		Random rand = new Random();
+		List<Integer> set = new ArrayList<Integer>();
+		for(int i =1; i <= 45; i++)
+			set.add(i);
+			
+		List<Integer> prevs = new ArrayList<Integer>(Arrays.asList(1, 2, 3, 4, 7, 9, 10, 11, 12, 15, 16, 19, 20, 21, 23, 25, 26, 28, 31, 32, 34, 36, 37, 39, 40, 42));
+		List<Integer> currents = new ArrayList<Integer>(Arrays.asList(1, 2, 3, 9, 10, 15, 20, 23, 25, 28, 30, 32, 39, 42, 44));
 
+		set.removeAll(prevs);
+		set.removeAll(currents);
+		getNums(set);
+	
+		prevs.retainAll(currents);
+		getNums(prevs);
+	}
+	
+	private void getNums(List<Integer> list){
+		Random rand = new Random();
+		for(int num : list){
+			System.out.print(num + ", ");
+		}
+		System.out.println();
 		for(int j = 0; j < 5; j++){
 			List<Integer> numList = new ArrayList<Integer>();
 			for(int i = 0; i < 6; i++){
@@ -131,6 +148,5 @@ public class LottoRecommendTest {
 			}
 			System.out.println();
 		}
-		
 	}
 }
