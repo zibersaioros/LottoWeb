@@ -112,8 +112,8 @@ public class LottoRecommendTest {
 		for(int i =1; i <= 45; i++)
 			set.add(i);
 			
-		List<Integer> prevs = new ArrayList<Integer>(Arrays.asList(1, 2, 3, 4, 7, 9, 10, 11, 12, 15, 16, 19, 20, 21, 23, 25, 26, 28, 31, 32, 34, 36, 37, 39, 40, 42));
-		List<Integer> currents = new ArrayList<Integer>(Arrays.asList(1, 2, 3, 9, 10, 15, 20, 23, 25, 28, 30, 32, 39, 42, 44));
+		List<Integer> prevs = new ArrayList<Integer>(Arrays.asList(1, 2, 3, 5, 7, 8, 9, 10, 11, 12, 15, 18, 19, 22, 25, 26, 27, 28, 29, 31, 33, 35, 36, 37, 38, 41, 45));
+		List<Integer> currents = new ArrayList<Integer>(Arrays.asList(3, 4, 6, 7, 10, 11, 13, 15, 19, 26, 27, 28, 30, 33, 34, 35, 36, 37, 39, 40, 42, 43, 44, 45));
 
 		set.removeAll(prevs);
 		set.removeAll(currents);
@@ -121,6 +121,15 @@ public class LottoRecommendTest {
 	
 		prevs.retainAll(currents);
 		getNums(prevs);
+		
+		List<Integer> set2 = new ArrayList<Integer>();
+		for(int i =1; i <= 45; i++)
+			set2.add(i);
+		
+		set2.removeAll(set);
+		set2.removeAll(prevs);
+		getNums(set2);
+		
 	}
 	
 	private void getNums(List<Integer> list){
@@ -129,6 +138,8 @@ public class LottoRecommendTest {
 			System.out.print(num + ", ");
 		}
 		System.out.println();
+		if(list.size() < 6)
+			return;
 		for(int j = 0; j < 5; j++){
 			List<Integer> numList = new ArrayList<Integer>();
 			for(int i = 0; i < 6; i++){
