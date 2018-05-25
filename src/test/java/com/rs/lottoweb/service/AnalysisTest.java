@@ -36,12 +36,12 @@ public class AnalysisTest {
 	public static final int MODE_EXCLUSION = 1;
 	public static final int MODE_FREQUENT = 2;
 	public static final int MODE_INVERT_EXCLUSION = 3;
-	
+
 	public boolean analysisMode = true;
-	
+
 	@Autowired
 	LottoService lottoService;
-	
+
 	@Autowired
 	FrequentAnalysisProperty frequentAnal;
 	@Autowired
@@ -50,21 +50,21 @@ public class AnalysisTest {
 	InvertAnalysisProperty invertAnal;
 
 	Random random = new Random(System.currentTimeMillis());
-	
+
 	double standard5;
 	double standard4;
 	double standard3;
-	
+
 	double standardDenominator5;
 	double standardDenominator4;
 	double standardDenominator3;
-	
+
 	Logger logger = LoggerFactory.getLogger("root");
 
 	@Before
 	public void begin(){
 		random = new Random(System.currentTimeMillis());
-		
+
 		standard5 = lottoService.getHitRate(45, 6, 5);
 		standard4 = lottoService.getHitRate(45, 6, 4);
 		standard3 = lottoService.getHitRate(45, 6, 3);
@@ -72,17 +72,17 @@ public class AnalysisTest {
 		standardDenominator4 = lottoService.getHitRateDenominator(45, 6, 4);
 		standardDenominator3 = lottoService.getHitRateDenominator(45, 6, 3);
 	}
-	
+
 
 	@Test
-//	@Ignore
+	@Ignore
 	public void testAnalysisExclusion(){
 		int testCount = 10;
 
 		lottoService.clearAllCache();
 
 		int[][] varArr = null;
-		
+
 		if(analysisMode){
 			int[] analysisCountArr = {9, 18};
 			int[] minRangeArr = {8, 60};
@@ -90,7 +90,7 @@ public class AnalysisTest {
 			int[] rangeIncreaseArr = {2, 21};
 			int[] minSeqArr = {0, analysisCountArr[1]};
 			int[] maxSeqArr = {0, analysisCountArr[1]};
-			
+
 			int[][] arr = {analysisCountArr, minRangeArr, maxRangeArr, rangeIncreaseArr, minSeqArr, maxSeqArr};
 			varArr = arr;
 		} else {
@@ -100,12 +100,12 @@ public class AnalysisTest {
 			int[] rangeIncreaseArr = {exclusionAnal.getRangeIncrease(), exclusionAnal.getRangeIncrease()};
 			int[] minSeqArr = {exclusionAnal.getMinSeq(), exclusionAnal.getMinSeq()};
 			int[] maxSeqArr = {exclusionAnal.getMaxSeq(), exclusionAnal.getMaxSeq()};
-			
+
 			int[][] arr = {analysisCountArr, minRangeArr, maxRangeArr, rangeIncreaseArr, minSeqArr, maxSeqArr};
 			varArr = arr;
 		}
-		
-//		int[][] varArr = {analysisCountArr, minRangeArr, maxRangeArr, rangeIncreaseArr, minSeqArr, maxSeqArr};
+
+		//		int[][] varArr = {analysisCountArr, minRangeArr, maxRangeArr, rangeIncreaseArr, minSeqArr, maxSeqArr};
 		int[] loopCount = {5, 8, 12, 5, 2, 2};
 		int[] analysisVars = {0, 0, 0, 0, 0, 0};
 		List<List<Integer>> duplicateList = new ArrayList<List<Integer>>();
@@ -113,12 +113,12 @@ public class AnalysisTest {
 			duplicateList.add(new ArrayList<Integer>());
 		AppendCounterBuffer acb = new AppendCounterBuffer();
 		analysis(testCount, 0, loopCount, varArr, duplicateList, analysisVars, acb, MODE_EXCLUSION);
-//		analysis(testCount, 0, loopCount, varArr, duplicateList, analysisVars, acb, MODE_INVERT_EXCLUSION);
-		
+		//		analysis(testCount, 0, loopCount, varArr, duplicateList, analysisVars, acb, MODE_INVERT_EXCLUSION);
+
 		System.out.println(acb.sb.toString());
-//		System.out.println(acb.log.toString());
-//		System.out.println(acb.loopCount);
-//		System.out.println(acb.count);
+		//		System.out.println(acb.log.toString());
+		//		System.out.println(acb.loopCount);
+		//		System.out.println(acb.count);
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("data", "analysisResult.txt")));
 			bw.write(acb.sb.toString());
@@ -131,14 +131,14 @@ public class AnalysisTest {
 
 
 	@Test
-//	@Ignore
+	@Ignore
 	public void testAnalysisFrequent(){
 		int testCount = 10;
 
 		lottoService.clearAllCache();
-		
+
 		int[][] varArr = null;
-		
+
 		if(analysisMode){
 			int[] analysisCountArr = {9, 18};
 			int[] minRangeArr = {8, 60};
@@ -146,7 +146,7 @@ public class AnalysisTest {
 			int[] rangeIncreaseArr = {2, 21};
 			int[] minSeqArr = {0, analysisCountArr[1]};
 			int[] maxSeqArr = {0, analysisCountArr[1]};
-			
+
 			int[][] arr = {analysisCountArr, minRangeArr, maxRangeArr, rangeIncreaseArr, minSeqArr, maxSeqArr};
 			varArr = arr;
 		} else {
@@ -156,12 +156,12 @@ public class AnalysisTest {
 			int[] rangeIncreaseArr = {frequentAnal.getRangeIncrease(), frequentAnal.getRangeIncrease()};
 			int[] minSeqArr = {frequentAnal.getMinSeq(), frequentAnal.getMinSeq()};
 			int[] maxSeqArr = {frequentAnal.getMaxSeq(), frequentAnal.getMaxSeq()};
-			
+
 			int[][] arr = {analysisCountArr, minRangeArr, maxRangeArr, rangeIncreaseArr, minSeqArr, maxSeqArr};
 			varArr = arr;
 		}
 
-//		int[][] varArr = {analysisCountArr, minRangeArr, maxRangeArr, rangeIncreaseArr, minSeqArr, maxSeqArr};
+		//		int[][] varArr = {analysisCountArr, minRangeArr, maxRangeArr, rangeIncreaseArr, minSeqArr, maxSeqArr};
 		int[] loopCount = {5, 8, 12, 5, 2, 2};
 		int[] analysisVars = {0, 0, 0, 0, 0, 0};
 		List<List<Integer>> duplicateList = new ArrayList<List<Integer>>();
@@ -169,7 +169,7 @@ public class AnalysisTest {
 			duplicateList.add(new ArrayList<Integer>());
 		AppendCounterBuffer acb = new AppendCounterBuffer();
 		analysis(testCount, 0, loopCount, varArr, duplicateList, analysisVars, acb, MODE_FREQUENT);
-		
+
 		System.out.println(acb.sb.toString());
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("data", "analysisFrequentResult.txt")));
@@ -178,17 +178,17 @@ public class AnalysisTest {
 			bw.close();
 		} catch (Exception e) {}
 	}
-	
-	
+
+
 	@Test
-//	@Ignore
+//		@Ignore
 	public void testAnalysisInvertExclusion(){
 		int testCount = 10;
 
 		lottoService.clearAllCache();
 
 		int[][] varArr = null;
-		
+
 		if(analysisMode){
 			int[] analysisCountArr = {9, 18};
 			int[] minRangeArr = {8, 60};
@@ -196,7 +196,7 @@ public class AnalysisTest {
 			int[] rangeIncreaseArr = {2, 21};
 			int[] minSeqArr = {0, analysisCountArr[1]};
 			int[] maxSeqArr = {0, analysisCountArr[1]};
-			
+
 			int[][] arr = {analysisCountArr, minRangeArr, maxRangeArr, rangeIncreaseArr, minSeqArr, maxSeqArr};
 			varArr = arr;
 		} else {
@@ -206,12 +206,12 @@ public class AnalysisTest {
 			int[] rangeIncreaseArr = {invertAnal.getRangeIncrease(), invertAnal.getRangeIncrease()};
 			int[] minSeqArr = {invertAnal.getMinSeq(), invertAnal.getMinSeq()};
 			int[] maxSeqArr = {invertAnal.getMaxSeq(), invertAnal.getMaxSeq()};
-			
+
 			int[][] arr = {analysisCountArr, minRangeArr, maxRangeArr, rangeIncreaseArr, minSeqArr, maxSeqArr};
 			varArr = arr;
 		}
-		
-//		int[][] varArr = {analysisCountArr, minRangeArr, maxRangeArr, rangeIncreaseArr, minSeqArr, maxSeqArr};
+
+		//		int[][] varArr = {analysisCountArr, minRangeArr, maxRangeArr, rangeIncreaseArr, minSeqArr, maxSeqArr};
 		int[] loopCount = {5, 8, 12, 5, 2, 2};
 		int[] analysisVars = {0, 0, 0, 0, 0, 0};
 		List<List<Integer>> duplicateList = new ArrayList<List<Integer>>();
@@ -219,9 +219,9 @@ public class AnalysisTest {
 			duplicateList.add(new ArrayList<Integer>());
 		AppendCounterBuffer acb = new AppendCounterBuffer();
 		analysis(testCount, 0, loopCount, varArr, duplicateList, analysisVars, acb, MODE_INVERT_EXCLUSION);
-		
+
 		System.out.println(acb.sb.toString());
-		
+
 		try {
 			File target = new File("data", "analysisInvertResult.txt");
 			if(!target.exists())
@@ -233,7 +233,7 @@ public class AnalysisTest {
 		} catch (Exception e) {}
 	}
 
-	
+
 	private int getAnalysisRandNum(int[] range){
 		return getAnalysisRandNum(range, range[1]);
 	}
@@ -243,8 +243,8 @@ public class AnalysisTest {
 		int min = range[0];
 		return random.nextInt(max - min + 1) + min;
 	}
-	
-	
+
+
 	private void analysis(int testCount, int depth, int[] loopCount, int[][] varArr, List<List<Integer>> duplicateList, int[] analysisVars, AppendCounterBuffer acb, int mode){
 		int limit = 1;
 		int containCount = 0;
@@ -253,7 +253,7 @@ public class AnalysisTest {
 				analysisVars[depth] = getAnalysisRandNum(varArr[depth], analysisVars[0]);
 			else
 				analysisVars[depth] = getAnalysisRandNum(varArr[depth]);
-			
+
 			if( duplicateList.get(depth).contains(analysisVars[depth]) || (depth==5 && analysisVars[depth] < analysisVars[depth-1])){
 				acb.appendToLog("depth = " + depth + " containtCount = " + containCount + "\n");
 				count--;
@@ -262,7 +262,7 @@ public class AnalysisTest {
 			}
 			containCount = 0;
 			duplicateList.get(depth).add(analysisVars[depth]);
-			
+
 			if(depth < varArr.length-1)
 				analysis(testCount, depth+1, loopCount, varArr, duplicateList, analysisVars, acb, mode);
 			else {
@@ -270,7 +270,7 @@ public class AnalysisTest {
 				String result = null;
 				switch (mode) {
 				case MODE_EXCLUSION:
-//					result = executeAnalysisExclusion(testCount, analysisVars);
+					//					result = executeAnalysisExclusion(testCount, analysisVars);
 					result = executeAnalysisExclusion(testCount, analysisVars[0], analysisVars[1], analysisVars[2], analysisVars[3], analysisVars[4], analysisVars[5]);
 					break;
 				case MODE_FREQUENT:
@@ -286,81 +286,81 @@ public class AnalysisTest {
 		}
 		duplicateList.get(depth).clear();
 	}
-	
-//	private String executeAnalysisExclusion(int testCount, int[] analysisVars){
-//		int count = 0;	
-//		double numsCount = 0;
-//		int hitCount = 0;
-//
-//		StringBuffer subBuffer = new StringBuffer();
-//		subBuffer.append("testCount = " + testCount + "\n");
-//		subBuffer.append("analysisCount = " + analysisVars[0] + "\n");
-//		subBuffer.append("minRange = " + analysisVars[1] + "\n");
-//		subBuffer.append("maxRange = " + analysisVars[2] + "\n");
-//		subBuffer.append("rangeIncrease = " + analysisVars[3] + "\n");
-//		subBuffer.append("minSeq = " + analysisVars[4] + "\n");
-//		subBuffer.append("maxSeq = " + analysisVars[5] + "\n");
-//
-//		int testedCount = 0;
-//		for(int i = 0; i < testCount; i++){
-//			int round = lottoService.getCurrentNumber() - i;
-//			List<AnalysisResult> analList = lottoService.analysisExclusion(round-1, analysisVars[0], analysisVars[1], analysisVars[2], analysisVars[3], analysisVars[4], analysisVars[5]);
-//			List<Integer> nums = new ArrayList<Integer>();
-//			for(AnalysisResult anal : analList){
-//				nums.addAll(lottoService.getExclusionNumber(round, anal.getRange(), anal.getSequence()));
-//			}
-//
-//			nums = lottoService.removeDuplicate(nums);
-//			LottoHistory history = lottoService.selectByRound(round);
-//			
-//			subBuffer.append("round : " + round + " count : " + nums.size());
-//			if(nums.size() >= 39){
-//				subBuffer.append("\n");
-//				continue;
-//			}
-//			testedCount++;
-//			
-//			numsCount += nums.size();
-//
-//			if(nums.contains(history.getNum1_ord())
-//					|| nums.contains(history.getNum2_ord())
-//					|| nums.contains(history.getNum3_ord())
-//					|| nums.contains(history.getNum4_ord())
-//					|| nums.contains(history.getNum5_ord())
-//					|| nums.contains(history.getNum6_ord())){
-//				subBuffer.append(" false\n");
-//				continue;
-//			}
-//
-//			hitCount += nums.size();
-//			subBuffer.append("\n");
-//			count++;
-//		}
-//		
-//
-//		if(Math.ceil(numsCount / testedCount) > 38)
-//			return null;
-//
-//		double hitRate =  count*1.0 / testedCount * 100;
-//		double realHitRate = hitCount / numsCount * 100;
-//		double averageRate = lottoService.getExclusionRate((int)Math.ceil(numsCount / testedCount))*100;
-//		subBuffer.append(String.format("hitRate = %f.2\n", hitRate));
-//		subBuffer.append(String.format("realHitRate = %f.2\n", realHitRate));
-//		subBuffer.append(String.format("averageRate = %f.2\n", averageRate));
-//		subBuffer.append("=====================================\n");
-//		
-////		System.out.println(subBuffer.toString());
-//		
-//		if(realHitRate >= averageRate * 3 && averageRate >= 7 
-//				|| hitRate >= 40 
-//				|| (realHitRate > averageRate * 2 && hitRate >= 30))
-//			return subBuffer.toString();
-//		else 
-//			return null;
-//	}
-	
-private String executeAnalysisExclusion(int testCount, int analysisCount, int minRange, int maxRange, int rangeIncrease, int minSeq, int maxSeq){
-		
+
+	//	private String executeAnalysisExclusion(int testCount, int[] analysisVars){
+	//		int count = 0;	
+	//		double numsCount = 0;
+	//		int hitCount = 0;
+	//
+	//		StringBuffer subBuffer = new StringBuffer();
+	//		subBuffer.append("testCount = " + testCount + "\n");
+	//		subBuffer.append("analysisCount = " + analysisVars[0] + "\n");
+	//		subBuffer.append("minRange = " + analysisVars[1] + "\n");
+	//		subBuffer.append("maxRange = " + analysisVars[2] + "\n");
+	//		subBuffer.append("rangeIncrease = " + analysisVars[3] + "\n");
+	//		subBuffer.append("minSeq = " + analysisVars[4] + "\n");
+	//		subBuffer.append("maxSeq = " + analysisVars[5] + "\n");
+	//
+	//		int testedCount = 0;
+	//		for(int i = 0; i < testCount; i++){
+	//			int round = lottoService.getCurrentNumber() - i;
+	//			List<AnalysisResult> analList = lottoService.analysisExclusion(round-1, analysisVars[0], analysisVars[1], analysisVars[2], analysisVars[3], analysisVars[4], analysisVars[5]);
+	//			List<Integer> nums = new ArrayList<Integer>();
+	//			for(AnalysisResult anal : analList){
+	//				nums.addAll(lottoService.getExclusionNumber(round, anal.getRange(), anal.getSequence()));
+	//			}
+	//
+	//			nums = lottoService.removeDuplicate(nums);
+	//			LottoHistory history = lottoService.selectByRound(round);
+	//			
+	//			subBuffer.append("round : " + round + " count : " + nums.size());
+	//			if(nums.size() >= 39){
+	//				subBuffer.append("\n");
+	//				continue;
+	//			}
+	//			testedCount++;
+	//			
+	//			numsCount += nums.size();
+	//
+	//			if(nums.contains(history.getNum1_ord())
+	//					|| nums.contains(history.getNum2_ord())
+	//					|| nums.contains(history.getNum3_ord())
+	//					|| nums.contains(history.getNum4_ord())
+	//					|| nums.contains(history.getNum5_ord())
+	//					|| nums.contains(history.getNum6_ord())){
+	//				subBuffer.append(" false\n");
+	//				continue;
+	//			}
+	//
+	//			hitCount += nums.size();
+	//			subBuffer.append("\n");
+	//			count++;
+	//		}
+	//		
+	//
+	//		if(Math.ceil(numsCount / testedCount) > 38)
+	//			return null;
+	//
+	//		double hitRate =  count*1.0 / testedCount * 100;
+	//		double realHitRate = hitCount / numsCount * 100;
+	//		double averageRate = lottoService.getExclusionRate((int)Math.ceil(numsCount / testedCount))*100;
+	//		subBuffer.append(String.format("hitRate = %f.2\n", hitRate));
+	//		subBuffer.append(String.format("realHitRate = %f.2\n", realHitRate));
+	//		subBuffer.append(String.format("averageRate = %f.2\n", averageRate));
+	//		subBuffer.append("=====================================\n");
+	//		
+	////		System.out.println(subBuffer.toString());
+	//		
+	//		if(realHitRate >= averageRate * 3 && averageRate >= 7 
+	//				|| hitRate >= 40 
+	//				|| (realHitRate > averageRate * 2 && hitRate >= 30))
+	//			return subBuffer.toString();
+	//		else 
+	//			return null;
+	//	}
+
+	private String executeAnalysisExclusion(int testCount, int analysisCount, int minRange, int maxRange, int rangeIncrease, int minSeq, int maxSeq){
+
 		StringBuffer subBuffer = new StringBuffer();
 		subBuffer.append("exclusion.testCount=" + testCount + "\n");
 		subBuffer.append("exclusion.analysisCount=" + analysisCount + "\n");
@@ -375,7 +375,7 @@ private String executeAnalysisExclusion(int testCount, int analysisCount, int mi
 		double tripleSum = 0;
 		int hit5Count = 0;
 		double fifthSum = 0;
-		
+
 		int testedCount = 0;
 		int invalidCount = 0;
 		for(int i = 0; i < testCount; i++){
@@ -387,7 +387,7 @@ private String executeAnalysisExclusion(int testCount, int analysisCount, int mi
 			}
 
 			nums = lottoService.invert(lottoService.removeDuplicate(nums));
-			
+
 			//각각 확률 계산.
 			int hitCount = lottoService.getHitCount(nums, round) ;
 			subBuffer.append("round : " + round + " count : " + nums.size());
@@ -396,9 +396,9 @@ private String executeAnalysisExclusion(int testCount, int analysisCount, int mi
 				//가장 최근 회차는 옳아야 함
 				if(i == 0)
 					return null;
-				
-				if(++invalidCount > testCount * 0.2)
-					break;
+
+				if(++invalidCount >= testCount * 0.2)
+					return null;
 				continue;
 			}
 			testedCount++;
@@ -406,7 +406,7 @@ private String executeAnalysisExclusion(int testCount, int analysisCount, int mi
 				subBuffer.append(expect + " : " + lottoService.getHitRateString(nums.size(), hitCount, expect) + "\n");
 			}
 			subBuffer.append("\n");
-			
+
 			//5개 맞을 확률 계산.
 			double fifthRate = lottoService.getHitRateDenominator(nums.size(), hitCount, 5);
 			if(fifthRate < standardDenominator5 && fifthRate > 0){
@@ -432,16 +432,16 @@ private String executeAnalysisExclusion(int testCount, int analysisCount, int mi
 				tripleSum += tripleRate;	
 			}
 		}
-		
+
 		double average5 = fifthSum / hit5Count;
 		double average4 = forthSum / hit4Count;
 		double average3 = tripleSum / hit3Count;
-		
+
 		double hit5Rate = hit5Count * 1.0 / testedCount * 100;
 		double hit4Rate = hit4Count * 1.0 / testedCount * 100;
 		double hit3Rate = hit3Count * 1.0 / testedCount * 100;
-		
-		
+
+
 		subBuffer.append(String.format("hit5Rate = %f.2\n", hit5Rate));
 		subBuffer.append(String.format("real5Rate = 1/%f.2\n", average5));
 		subBuffer.append(String.format("average5Rate = 1/%f.2\n", standardDenominator5));
@@ -458,11 +458,11 @@ private String executeAnalysisExclusion(int testCount, int analysisCount, int mi
 			return subBuffer.toString();
 		else
 			return null;
-		
+
 	}
-	
+
 	private String executeAnalysisFrequent(int testCount, int analysisCount, int minRange, int maxRange, int rangeIncrease, int minSeq, int maxSeq){
-		
+
 		StringBuffer subBuffer = new StringBuffer();
 		subBuffer.append("frequent.testCount=" + testCount + "\n");
 		subBuffer.append("frequent.analysisCount=" + analysisCount + "\n");
@@ -489,8 +489,8 @@ private String executeAnalysisExclusion(int testCount, int analysisCount, int mi
 			}
 
 			nums = lottoService.removeDuplicate(nums);
-			
-			
+
+
 			//각각 확률 계산.
 			int hitCount = lottoService.getHitCount(nums, round) ;
 			subBuffer.append("round : " + round + " count : " + nums.size());
@@ -499,9 +499,9 @@ private String executeAnalysisExclusion(int testCount, int analysisCount, int mi
 				//가장 최근 회차는 옳아야 함
 				if(i == 0)
 					return null;
-				
-				if(++invalidCount > testCount * 0.2)
-					break;
+
+				if(++invalidCount >= testCount * 0.2)
+					return null;
 				continue;
 			}
 			testedCount++;
@@ -509,7 +509,7 @@ private String executeAnalysisExclusion(int testCount, int analysisCount, int mi
 				subBuffer.append(expect + " : " + lottoService.getHitRateString(nums.size(), hitCount, expect) + "\n");
 			}
 			subBuffer.append("\n");
-			
+
 			//5개 맞을 확률 계산.
 			double fifthRate = lottoService.getHitRateDenominator(nums.size(), hitCount, 5);
 			if(fifthRate < standardDenominator5 && fifthRate > 0){
@@ -539,11 +539,11 @@ private String executeAnalysisExclusion(int testCount, int analysisCount, int mi
 		double average5 = fifthSum / hit5Count;
 		double average4 = forthSum / hit4Count;
 		double average3 = tripleSum / hit3Count;
-		
+
 		double hit5Rate = hit5Count * 1.0 / testedCount * 100;
 		double hit4Rate = hit4Count * 1.0 / testedCount * 100;
 		double hit3Rate = hit3Count * 1.0 / testedCount * 100;
-		
+
 		subBuffer.append(String.format("hit5Rate = %f.2\n", hit5Rate));
 		subBuffer.append(String.format("real5Rate = 1/%f.2\n", average5));
 		subBuffer.append(String.format("average5Rate = 1/%f.2\n", standardDenominator5));
@@ -561,9 +561,9 @@ private String executeAnalysisExclusion(int testCount, int analysisCount, int mi
 		else
 			return null;
 	}
-	
+
 	private String executeAnalysisInvert(int testCount, int analysisCount, int minRange, int maxRange, int rangeIncrease, int minSeq, int maxSeq){
-		
+
 		StringBuffer subBuffer = new StringBuffer();
 		subBuffer.append("invert.testCount=" + testCount + "\n");
 		subBuffer.append("invert.analysisCount=" + analysisCount + "\n");
@@ -578,7 +578,7 @@ private String executeAnalysisExclusion(int testCount, int analysisCount, int mi
 		double tripleSum = 0;
 		int hit5Count = 0;
 		double fifthSum = 0;
-		
+
 		int testedCount = 0;
 		int invalidCount = 0;
 		for(int i = 0; i < testCount; i++){
@@ -590,7 +590,7 @@ private String executeAnalysisExclusion(int testCount, int analysisCount, int mi
 			}
 
 			nums = lottoService.invert(lottoService.removeDuplicate(nums));
-			
+
 			//각각 확률 계산.
 			int hitCount = lottoService.getHitCount(nums, round) ;
 			subBuffer.append("round : " + round + " count : " + nums.size());
@@ -599,9 +599,9 @@ private String executeAnalysisExclusion(int testCount, int analysisCount, int mi
 				//가장 최근 회차는 옳아야 함
 				if(i == 0)
 					return null;
-				
-				if(++invalidCount > testCount * 0.2)
-					break;
+
+				if(++invalidCount >= testCount * 0.2)
+					return null;
 				continue;
 			}
 			testedCount++;
@@ -609,7 +609,7 @@ private String executeAnalysisExclusion(int testCount, int analysisCount, int mi
 				subBuffer.append(expect + " : " + lottoService.getHitRateString(nums.size(), hitCount, expect) + "\n");
 			}
 			subBuffer.append("\n");
-			
+
 			//5개 맞을 확률 계산.
 			double fifthRate = lottoService.getHitRateDenominator(nums.size(), hitCount, 5);
 			if(fifthRate < standardDenominator5 && fifthRate > 0){
@@ -635,16 +635,16 @@ private String executeAnalysisExclusion(int testCount, int analysisCount, int mi
 				tripleSum += tripleRate;	
 			}
 		}
-		
+
 		double average5 = fifthSum / hit5Count;
 		double average4 = forthSum / hit4Count;
 		double average3 = tripleSum / hit3Count;
-		
+
 		double hit5Rate = hit5Count * 1.0 / testedCount * 100;
 		double hit4Rate = hit4Count * 1.0 / testedCount * 100;
 		double hit3Rate = hit3Count * 1.0 / testedCount * 100;
-		
-		
+
+
 		subBuffer.append(String.format("hit5Rate = %f.2\n", hit5Rate));
 		subBuffer.append(String.format("real5Rate = 1/%f.2\n", average5));
 		subBuffer.append(String.format("average5Rate = 1/%f.2\n", standardDenominator5));
@@ -661,21 +661,21 @@ private String executeAnalysisExclusion(int testCount, int analysisCount, int mi
 			return subBuffer.toString();
 		else
 			return null;
-		
+
 	}
-	
+
 	class AppendCounterBuffer{
 		int count = 0;
 		int loopCount = 0;
 		StringBuffer sb = new StringBuffer();
 		StringBuffer log = new StringBuffer();
-		
+
 		public int append(String s){
 			count++;
 			sb.append(s);
 			return count;
 		}
-		
+
 		public void appendToLog(String s){
 			log.append(s);
 		}

@@ -37,7 +37,7 @@ public class LottoRecommendTest {
 
 
 	@Test
-	@Ignore
+//	@Ignore
 	public void testAnalysis(){
 
 		lottoService.scheduleAnalysis();
@@ -106,14 +106,14 @@ public class LottoRecommendTest {
 	
 	
 	@Test
-//	@Ignore
+	@Ignore
 	public void test(){
 		List<Integer> set = new ArrayList<Integer>();
 		for(int i =1; i <= 45; i++)
 			set.add(i);
 			
-		List<Integer> prevs = new ArrayList<Integer>(Arrays.asList(1, 2, 3, 5, 7, 8, 9, 10, 11, 12, 15, 18, 19, 22, 25, 26, 27, 28, 29, 31, 33, 35, 36, 37, 38, 41, 45));
-		List<Integer> currents = new ArrayList<Integer>(Arrays.asList(3, 4, 6, 7, 10, 11, 13, 15, 19, 26, 27, 28, 30, 33, 34, 35, 36, 37, 39, 40, 42, 43, 44, 45));
+		List<Integer> prevs = new ArrayList<Integer>(Arrays.asList(2, 3, 6, 7, 8, 11, 15, 16, 17, 18, 21, 22, 23, 26, 27, 31, 36, 38, 40, 41, 42, 44, 45));
+		List<Integer> currents = new ArrayList<Integer>(Arrays.asList(2, 6, 7, 8, 9, 11, 12, 14, 15, 17, 21, 22, 26, 27, 30, 35, 37, 39, 40, 41, 43));
 
 		set.removeAll(prevs);
 		set.removeAll(currents);
