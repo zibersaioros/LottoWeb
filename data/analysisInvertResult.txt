@@ -1,0 +1,67 @@
+invert.testCount=10
+invert.analysisCount=18
+invert.minRange=37
+invert.maxRange=172
+invert.rangeIncrease=18
+invert.minSeq=13
+invert.maxSeq=15
+round : 807 count : 34 hit : 5
+6 : 0
+5 : 1 / 46376.000000.2
+4 : 1 / 662.514286.2
+
+round : 806 count : 33 hit : 4
+6 : 0
+5 : 0
+4 : 1 / 2728.000000.2
+
+round : 805 count : 27 hit : 6
+6 : 1 / 296010.000000.2
+5 : 1 / 2349.285714.2
+4 : 1 / 93.971429.2
+
+round : 804 count : 24 hit : 5
+6 : 0
+5 : 1 / 7084.000000.2
+4 : 1 / 157.422222.2
+
+round : 803 count : 14 hit : 5
+6 : 0
+5 : 1 / 333.666667.2
+4 : 1 / 16.683333.2
+
+round : 802 count : 34 hit : 4
+6 : 0
+5 : 0
+4 : 1 / 3091.733333.2
+
+round : 801 count : 34 hit : 5
+6 : 0
+5 : 1 / 46376.000000.2
+4 : 1 / 662.514286.2
+
+round : 800 count : 22 hit : 5
+6 : 0
+5 : 1 / 4389.000000.2
+4 : 1 / 109.725000.2
+
+round : 799 count : 26 hit : 2
+6 : 0
+5 : 0
+4 : 0
+
+round : 798 count : 17 hit : 4
+6 : 0
+5 : 0
+4 : 1 / 158.666667.2
+
+hit5Rate = 40.000000.2
+real5Rate = 1/3538.988095.2
+average5Rate = 1/34807.948718.2
+hit4Rate = 70.000000.2
+real4Rate = 1/265.928175.2
+average4Rate = 1/732.798920.2
+hit3Rate = 70.000000.2
+real3Rate = 1/17.713825.2
+average3Rate = 1/44.562097.2
+=====================================
