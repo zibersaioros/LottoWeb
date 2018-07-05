@@ -75,7 +75,7 @@ public class AnalysisTest {
 
 
 	@Test
-	@Ignore
+//	@Ignore
 	public void testAnalysisExclusion(){
 		int testCount = 10;
 
@@ -131,7 +131,7 @@ public class AnalysisTest {
 
 
 	@Test
-	@Ignore
+//	@Ignore
 	public void testAnalysisFrequent(){
 		int testCount = 10;
 
@@ -186,7 +186,7 @@ public class AnalysisTest {
 		int testCount = 10;
 
 		lottoService.clearAllCache();
-
+		
 		int[][] varArr = null;
 
 		if(analysisMode){
@@ -656,8 +656,11 @@ public class AnalysisTest {
 		subBuffer.append(String.format("average3Rate = 1/%f.2\n", standardDenominator3));
 		subBuffer.append("=====================================\n");
 		System.out.println(subBuffer.toString());
-		if( (average4 < standardDenominator4 * 0.4)
-				&& hit4Rate >= 70 && invalidCount < testCount * 0.3)
+		if( 
+//				(average4 < standardDenominator4 * 0.45)
+//				&& 
+				hit4Rate >= 70 && 
+				average4 / standardDenominator4 * 100 < hit4Rate  && invalidCount < testCount * 0.1)
 			return subBuffer.toString();
 		else
 			return null;

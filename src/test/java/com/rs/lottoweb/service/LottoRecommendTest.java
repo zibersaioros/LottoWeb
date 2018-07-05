@@ -112,8 +112,8 @@ public class LottoRecommendTest {
 		for(int i =1; i <= 45; i++)
 			set.add(i);
 			
-		List<Integer> prevs = new ArrayList<Integer>(Arrays.asList(2, 3, 6, 7, 8, 11, 15, 16, 17, 18, 21, 22, 23, 26, 27, 31, 36, 38, 40, 41, 42, 44, 45));
-		List<Integer> currents = new ArrayList<Integer>(Arrays.asList(1, 2, 3, 5, 6, 7, 8, 10, 12, 14, 18, 20, 22, 25, 26, 27, 29, 31, 37, 38, 39, 40, 41, 43, 44));
+		List<Integer> prevs = new ArrayList<Integer>(Arrays.asList(2, 5, 6, 11, 13, 15, 17, 18, 19, 20, 22, 23, 25, 26, 27, 29, 31, 34, 37, 39, 41, 42, 43, 44, 45));
+		List<Integer> currents = new ArrayList<Integer>(Arrays.asList(1, 5, 6, 7, 14, 18, 24, 25, 27, 28, 30, 31, 32, 33, 34, 35, 36, 37, 40, 42, 43, 44, 45));
 
 		set.removeAll(prevs);
 		set.removeAll(currents);

@@ -1,67 +1,67 @@
 exclusion.testCount=10
 exclusion.analysisCount=9
-exclusion.minRange=47
-exclusion.maxRange=161
-exclusion.rangeIncrease=12
-exclusion.minSeq=0
-exclusion.maxSeq=9
-round : 807 count : 33 hit : 6
-6 : 1 / 1107568.000000.2
-5 : 1 / 6836.839506.2
-4 : 1 / 210.364292.2
+exclusion.minRange=32
+exclusion.maxRange=168
+exclusion.rangeIncrease=15
+exclusion.minSeq=6
+exclusion.maxSeq=6
+round : 813 count : 40 hit : 6
+6 : 1 / 3838380.000000.2
+5 : 1 / 18815.588235.2
+4 : 1 / 456.135472.2
 
-round : 806 count : 28 hit : 4
-6 : 0
-5 : 0
-4 : 1 / 1365.000000.2
+round : 812 count : 38 hit : 6
+6 : 1 / 2760681.000000.2
+5 : 1 / 14378.546875.2
+4 : 1 / 371.059274.2
 
-round : 805 count : 30 hit : 5
-6 : 0
-5 : 1 / 23751.000000.2
-4 : 1 / 395.850000.2
-
-round : 804 count : 34 hit : 5
-6 : 0
-5 : 1 / 46376.000000.2
-4 : 1 / 662.514286.2
-
-round : 803 count : 26 hit : 5
-6 : 0
-5 : 1 / 10963.333333.2
-4 : 1 / 219.266667.2
-
-round : 802 count : 31 hit : 6
-6 : 1 / 736281.000000.2
-5 : 1 / 4908.540000.2
-4 : 1 / 163.618000.2
-
-round : 801 count : 23 hit : 5
-6 : 0
-5 : 1 / 5608.166667.2
-4 : 1 / 131.956863.2
-
-round : 800 count : 31 hit : 5
-6 : 0
-5 : 1 / 28318.500000.2
-4 : 1 / 453.096000.2
-
-round : 799 count : 36 hit : 4
+round : 811 count : 36 hit : 4
 6 : 0
 5 : 0
 4 : 1 / 3927.000000.2
 
-round : 798 count : 36 hit : 6
+round : 810 count : 35 hit : 6
+6 : 1 / 1623160.000000.2
+5 : 1 / 9328.505747.2
+4 : 1 / 266.528736.2
+
+round : 809 count : 33 hit : 4
+6 : 0
+5 : 0
+4 : 1 / 2728.000000.2
+
+round : 808 count : 36 hit : 6
 6 : 1 / 1947792.000000.2
 5 : 1 / 10821.066667.2
 4 : 1 / 298.512184.2
 
-hit5Rate = 70.000000.2
-real5Rate = 1/13029.635168.2
+round : 807 count : 23 hit : 5
+6 : 0
+5 : 1 / 5608.166667.2
+4 : 1 / 131.956863.2
+
+round : 806 count : 21 hit : 4
+6 : 0
+5 : 0
+4 : 1 / 399.000000.2
+
+round : 805 count : 34 hit : 5
+6 : 0
+5 : 1 / 46376.000000.2
+4 : 1 / 662.514286.2
+
+round : 804 count : 34 hit : 6
+6 : 1 / 1344904.000000.2
+5 : 1 / 8005.380952.2
+4 : 1 / 237.196473.2
+
+hit5Rate = 60.000000.2
+real5Rate = 1/11159.542524.2
 average5Rate = 1/34807.948718.2
 hit4Rate = 80.000000.2
-real4Rate = 1/316.897286.2
+real4Rate = 1/352.862911.2
 average4Rate = 1/732.798920.2
 hit3Rate = 80.000000.2
-real3Rate = 1/22.443640.2
+real3Rate = 1/24.469214.2
 average3Rate = 1/44.562097.2
 =====================================
